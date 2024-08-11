@@ -85,7 +85,7 @@ const WorkerSignup = () => {
                     />
                 </div>
 
-                <div className="mb-4">
+                {/* <div className="mb-4">
                     <label htmlFor="TypeOfWork" className="block text-gray-700 text-sm font-bold mb-2">Type Of Work:</label>
                     <input
                         type="text"
@@ -95,6 +95,28 @@ const WorkerSignup = () => {
                         placeholder="Enter your type of work"
                         required
                     />
+                </div> */}
+
+<div className="mb-4">
+                    <label htmlFor="typeOfWork" className="block text-gray-700 text-sm font-bold mb-2">Type of Work:</label>
+                    <select
+                        name="typeOfWork"
+                        onChange={(e) => setTypeOfWork(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        required
+                    >
+                        <option value="" disabled selected>Select your type of work</option>
+                        <option value="electrician">Electrician</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="mechanic">Mechanic</option>
+                        <option value="carpenter">Carpenter</option>
+                        <option value="chef">Chef</option>
+                        <option value="maid">Maid</option>
+                        <option value="guard">Painter</option>
+                        <option value="gardener">Gardener</option>
+                        <option value="coding">Coder</option>
+                        {/* Add more options as needed */}
+                    </select>
                 </div>
 
                 <div className="mb-6">

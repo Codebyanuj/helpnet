@@ -76,15 +76,15 @@ const GridContainer = () => {
   const navigate = useNavigate();
 
   const boxes = [
-    { image: electician, data: 'Electrician' },
-    { image: mechanic, data: 'Mechanic' },
-    { image: plumber, data: 'Plumber' },
-    { image: guard, data: 'Guard' },
-    { image: gardener, data: 'Gardener' },
-    { image: maid, data: 'Maid' },
-    { image: carpenter, data: 'Carpenter' },
-    { image: contractor, data: 'Contractor' },
-    { image: chef, data: 'Chef' },
+    { image: electician, data: 'electrician' },
+    { image: mechanic, data: 'mechanic' },
+    { image: plumber, data: 'plumber' },
+    { image: guard, data: 'guard' },
+    { image: gardener, data: 'gardener' },
+    { image: maid, data: 'maid' },
+    { image: carpenter, data: 'carpenter' },
+    { image: contractor, data: 'contractor' },
+    { image: chef, data: 'chef' },
     { image: coding, data: 'coding' },
     
   ];

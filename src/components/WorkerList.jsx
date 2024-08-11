@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { useParams } from 'react-router-dom'; // to get the category from the URL
+import { db } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const WorkerList = () => {
+    const { category } = useParams(); // Retrieve the category from the URL parameters
     const [workers, setWorkers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,8 +12,11 @@ const WorkerList = () => {
     useEffect(() => {
         const fetchWorkers = async () => {
             try {
-                // Reference to the 'Workers' collection
-                const querySnapshot = await getDocs(collection(db, 'Workers'));
+                // Reference to the 'Workers' collection with a query to filter by typeOfWork
+                const q = query(collection(db, 'Workers'), where('typeOfWork', '==', category));
+
+                // Fetching the documents matching the query
+                const querySnapshot = await getDocs(q);
 
                 // Map the results to an array of worker data
                 const workersData = querySnapshot.docs.map(doc => ({
@@ -29,7 +34,7 @@ const WorkerList = () => {
         };
 
         fetchWorkers();
-    }, []);
+    }, [category]); // Re-run effect if the category changes
 
     if (loading) {
         return <p>Loading...</p>;
@@ -41,7 +46,9 @@ const WorkerList = () => {
 
     return (
         <div className="p-8">
-            <h2 className="text-2xl font-bold mb-6">Available Workers</h2>
+            <h2 className="text-2xl font-bold mb-6">
+                {category.charAt(0).toUpperCase() + category.slice(1)}s Available
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {workers.map((worker) => (
                     <div key={worker.id} className="bg-gray-100 p-4 rounded-lg">
