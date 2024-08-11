@@ -1,44 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { db } from './firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const WorkerList = () => {
-  const { category } = useParams();
-  const [workers, setWorkers] = useState([]);
+    const [workers, setWorkers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Mocked fetching data based on category
-    // Replace this with an actual API call or Firestore query
-    const fetchWorkers = async () => {
-      const data = [
-        { name: 'John Doe', category: 'electrician' },
-        { name: 'Jane Smith', category: 'electrician' },
-        { name: 'Bob Brown', category: 'mechanic' },
-        { name: 'Alice Green', category: 'mechanic' },
-        { name: 'Anuj Sawant', category: 'coding' },
-        { name: 'Sandeep Singh', category: 'coding' },
-        // Add more workers here
-      ];
-      const filteredWorkers = data.filter(worker => worker.category === category);
-      setWorkers(filteredWorkers);
-    };
+    useEffect(() => {
+        const fetchWorkers = async () => {
+            try {
+                // Reference to the 'Workers' collection
+                const querySnapshot = await getDocs(collection(db, 'Workers'));
 
-    fetchWorkers();
-  }, [category]);
+                // Map the results to an array of worker data
+                const workersData = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-  return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-6">{category.charAt(0).toUpperCase() + category.slice(1)}s</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {workers.map((worker, index) => (
-          <div key={index} className="bg-gray-100 p-4 rounded-lg">
-            <p className="font-bold">{worker.name}</p>
-            <p className="text-sm">{worker.category.charAt(0).toUpperCase() + worker.category.slice(1)}</p>
-            <button className="mt-4 bg-blue-500 text-white py-1 px-3 rounded-lg">Book Now</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+                setWorkers(workersData);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+                console.error("Error fetching workers data:", err);
+            }
+        };
+
+        fetchWorkers();
+    }, []);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
+
+    return (
+        <div className="p-8">
+            <h2 className="text-2xl font-bold mb-6">Available Workers</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {workers.map((worker) => (
+                    <div key={worker.id} className="bg-gray-100 p-4 rounded-lg">
+                        <p className="font-bold">{worker.name}</p>
+                        <p className="text-sm">Type of Work: {worker.typeOfWork}</p>
+                        <p className="text-sm">Address: {worker.address}</p>
+                        <p className="text-sm">Email: {worker.email}</p>
+                        <button className="mt-4 bg-blue-500 text-white py-1 px-3 rounded-lg">Book Now</button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 export default WorkerList;

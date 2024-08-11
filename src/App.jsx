@@ -24,12 +24,12 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-          <Route path='/Home' element={<Home />}></Route>
+          <Route path='/' element={<Home />}></Route>
           <Route path='/SignType' element={<SigninType />}></Route>
           <Route path='/workerSignin' element={<WorkerSignin />}></Route>
           <Route path='/signup' element={<SignUpForm />}></Route>
           <Route path='/login' element={<Login />}></Route>
-          <Route path="/" element={<GridContainer />} />
+          <Route path="Container" element={<GridContainer />} />
           <Route path="/workers/:category" element={<WorkerList />} />
         </Routes>
       </BrowserRouter>
