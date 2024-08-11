@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth, db } from './firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -10,9 +10,14 @@ const SignUpForm = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const navigate = useNavigate();  // Initialize useNavigate
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        setSuccess(null);
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -27,7 +32,10 @@ const SignUpForm = () => {
 
             await setDoc(doc(db, 'customers', user.uid), customerData);
 
-            console.log("Customer account created");
+            setSuccess("Customer account created successfully!");
+
+            // Redirect to home page after successful signup
+            navigate('/');
 
         } catch (err) {
             setError(err.message);
@@ -38,9 +46,10 @@ const SignUpForm = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-200">
             <form className="bg-white shadow-md rounded-lg px-14 pt-6 pb-8 mb-4 w-full max-w-sm" onSubmit={handleSubmit}>
-                <h2 className="text-3xl font-bold mb-6 text-center font-mono">Customer Login</h2>
+                <h2 className="text-3xl font-bold mb-6 text-center font-mono">Customer Sign Up</h2>
 
                 {error && <p className="text-red-500 text-center">{error}</p>}
+                {success && <p className="text-green-500 text-center">{success}</p>}
 
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth, db } from "./firebase";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -9,32 +9,34 @@ const WorkerSignup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
-    const [TypeOfWork, setTypeOfWork] = useState('');
+    const [typeOfWork, setTypeOfWork] = useState('');
     const [error, setError] = useState(null);
-
-//     TypeOfWork: This state variable will store the type of work the user can perform (e.g., Plumbing, Electrical, etc.).
-// setTypeOfWork: This function updates the TypeOfWork state variable.
-// useState(''): This initializes the TypeOfWork state with an empty string
+    const [success, setSuccess] = useState(null);
+    const navigate = useNavigate();  // Initialize useNavigate
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        setSuccess(null);
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Save user data to Firestore
-            const WorkerData = {
+            // Save worker data to Firestore
+            const workerData = {
                 name: name,
                 email: email,
                 address: address,
-                typeOfWork: TypeOfWork
-                //key :name from html
-             
+                typeOfWork: typeOfWork
             };
 
-            await setDoc(doc(db, 'Workers', user.uid), WorkerData);
+            await setDoc(doc(db, 'Workers', user.uid), workerData);
 
-            console.log("Worker's account created");
+            setSuccess("Worker's account created successfully!");
+
+            // Redirect to home page after successful signup
+            navigate('/');
 
         } catch (err) {
             setError(err.message);
@@ -45,9 +47,10 @@ const WorkerSignup = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-200">
             <form className="bg-white shadow-md rounded-lg px-14 pt-6 pb-8 mb-4 w-full max-w-sm" onSubmit={handleSubmit}>
-                <h2 className="text-3xl font-bold mb-6 text-center font-mono">Worker SignIn</h2>
+                <h2 className="text-3xl font-bold mb-6 text-center font-mono">Worker Sign Up</h2>
 
                 {error && <p className="text-red-500 text-center">{error}</p>}
+                {success && <p className="text-green-500 text-center">{success}</p>}
 
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
@@ -85,19 +88,7 @@ const WorkerSignup = () => {
                     />
                 </div>
 
-                {/* <div className="mb-4">
-                    <label htmlFor="TypeOfWork" className="block text-gray-700 text-sm font-bold mb-2">Type Of Work:</label>
-                    <input
-                        type="text"
-                        name="typeOfWork"
-                        onChange={(e) => setTypeOfWork(e.target.value)}
-                        className="w-full px-3 py-2 border rounded border-gray-300"
-                        placeholder="Enter your type of work"
-                        required
-                    />
-                </div> */}
-
-<div className="mb-4">
+                <div className="mb-4">
                     <label htmlFor="typeOfWork" className="block text-gray-700 text-sm font-bold mb-2">Type of Work:</label>
                     <select
                         name="typeOfWork"
