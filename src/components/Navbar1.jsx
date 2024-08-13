@@ -10,7 +10,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-purple-950 to-black shadow-lg p-4 px-6 mx-3 mt-3 border-2 border-gray-700 rounded-xl">
+    <nav className="bg-gradient-to-r from-purple-950 to-black shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
