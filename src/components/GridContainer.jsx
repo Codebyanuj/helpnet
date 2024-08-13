@@ -101,7 +101,7 @@ const GridContainer = () => {
         </h4>
         <p className="text-lg font-normal text-black-500 lg:text-xl dark:text-white-400">Select the Type of Worker you need.</p>
       </div>
-      <div className="grid grid-cols-2 gap-5 p-9 mx-12 md:grid-cols-3 lg:grid-cols-5 items-center justify-items-center">
+      <div className="grid grid-cols-2 gap-5 p-3 mx-1 md:grid-cols-3 lg:grid-cols-5 lg:gap-5 lg:p-9 lg:mx-12 items-center justify-items-center">
         {boxes.map((box, index) => (
           <div
             key={index}
