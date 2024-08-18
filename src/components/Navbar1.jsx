@@ -13,7 +13,7 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-purple-950 to-black shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <div className="bg-cyan-500 p-2 rounded-full">
             <span className="text-white text-2xl font-extrabold font-mono">H</span>
           </div>
@@ -23,9 +23,9 @@ const Navbar = () => {
         {/* Navigation links */}
         <div className="hidden md:flex space-x-12 text-lg font-serif">
           <a href="/" className="text-white hover:text-cyan-400 transition duration-300">Home</a>
-          <a href="/about" className="text-white hover:text-cyan-400 transition duration-300">About</a>
+          <a href="/Aboutus" className="text-white hover:text-cyan-400 transition duration-300">About</a>
           <a href="/Container" className="text-white hover:text-cyan-400 transition duration-300">Categories</a>
-          <a href="/help" className="text-white hover:text-cyan-400 transition duration-300">Help</a>
+          <a href="/Help" className="text-white hover:text-cyan-400 transition duration-300">Help</a>
         </div>
 
         {/* Right-aligned buttons and Hamburger Menu */}

@@ -45,14 +45,14 @@ const GridContainer = () => {
           Select the Type of Worker you need.
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4 p-4 mx-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 items-center justify-items-center">
+      <div className="grid grid-cols-2 gap-4 p-4 mx-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 items-center justify-items-center">
         {boxes.map((box, index) => (
           <div
             key={index}
             className="bg-gray-200 p-4 h-auto w-full sm:w-40 md:w-44 flex flex-col items-center justify-center text-center rounded-lg cursor-pointer hover:bg-gray-300 transition duration-300"
             onClick={() => handleCategoryClick(box.data)}
           >
-            <img src={box.image} alt={`${box.data} icon`} className="h-20 w-20 mb-2" />
+            <img src={box.image} alt={`${box.data} icon`} className="h-30 w-20 mb-4" />
             <p className="text-lg sm:text-xl">{box.data}</p>
           </div>
         ))}
