@@ -28,7 +28,9 @@ const WorkerSignup = () => {
                 name: name,
                 email: email,
                 address: address,
-                typeOfWork: typeOfWork
+                typeOfWork: typeOfWork,
+                role: 'worker'
+
             };
 
             await setDoc(doc(db, 'Workers', user.uid), workerData);
