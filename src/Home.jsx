@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { auth, db } from "./firebase"; // Assuming you have Firebase configured here
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
+// Importing components for different roles
 import CustomerNavbar from "./components/CustomerNavbar1";
 import WorkerNavbar from "./components/WorkerNavbar";
 // import CustomerHero from "./components/CustomerHero";
@@ -13,16 +13,17 @@ import Footer1 from "./components/Footer1";
 import WorkerFooter from "./components/WorkerFooter";
 import Hero from "./components/Hero1";
 
+
+
 const Home = () => {
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserRole = async (uid) => {
             try {
                 const customerDoc = await getDoc(doc(db, "customers", uid));
-                const workerDoc = await getDoc(doc(db, "workers", uid));
+                const workerDoc = await getDoc(doc(db, "Workers", uid));
 
                 if (customerDoc.exists()) {
                     return customerDoc.data().role;
@@ -38,38 +39,30 @@ const Home = () => {
             }
         };
 
-        const handleAuthStateChange = async (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const role = await fetchUserRole(user.uid);
                 setUserRole(role);
-                setLoading(false);
-
-                if (role === "customer") {
-                    navigate("/customer-home");
-                } else if (role === "worker") {
-                    navigate("/worker-home");
-                }
             } else {
                 setUserRole(null);
-                setLoading(false);
             }
-        };
-
-        const unsubscribe = onAuthStateChanged(auth, handleAuthStateChange);
+            setLoading(false);
+        });
 
         return () => unsubscribe();
-    }, [navigate]);
+    }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>; // Show a loading spinner or placeholder
     }
 
     if (!userRole) {
-        return <div>Please sign in to continue.</div>;
+        return <a href='/signup'><div>Please sign in to continue.</div></a>; // Or redirect to a login page
     }
 
     return (
         <div>
+            {/* Conditional rendering based on the user's role */}
             {userRole === "customer" && (
                 <>
                     <CustomerNavbar />
@@ -78,13 +71,16 @@ const Home = () => {
                     <Footer1 />
                 </>
             )}
+
             {userRole === "worker" && (
                 <>
                     <WorkerNavbar />
-                    <WorkerHero />
+                    <Hero />
                     <WorkerFooter />
                 </>
             )}
+
+            {/* You can add more conditions for other roles like admin if needed */}
         </div>
     );
 };
