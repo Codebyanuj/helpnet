@@ -14,6 +14,8 @@ import GridContainer from './components/GridContainer';
 import WorkerList from './components/WorkerList';
 import AboutUs from './components/AboutUS';
 import Help from './components/Help';
+import Workernav from './components/WorkerNavbar';
+
 
 
 
@@ -30,6 +32,7 @@ function App() {
           <Route path='/' element={<Home />}></Route>
           <Route path='/Aboutus' element={<AboutUs />}></Route>
           <Route path='/Help' element={<Help />}></Route>
+          <Route path='/Workernav' element={<Workernav />}></Route>
 
           <Route path='/SignType' element={<SigninType />}></Route>
           <Route path='/workerSignin' element={<WorkerSignin />}></Route>

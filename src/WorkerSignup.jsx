@@ -9,7 +9,9 @@ const WorkerSignup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
-    const [typeOfWork, setTypeOfWork] = useState('');
+    const [typeOfWork, setphone] = useState('');
+    const [phone, setTypeOfWork] = useState('');
+
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();  // Initialize useNavigate
@@ -29,7 +31,9 @@ const WorkerSignup = () => {
                 email: email,
                 address: address,
                 typeOfWork: typeOfWork,
+                phone: '+91'+phone,
                 role: 'worker'
+                //field name:name frrom html input field
 
             };
 
@@ -110,6 +114,18 @@ const WorkerSignup = () => {
                         <option value="coding">Coder</option>
                         {/* Add more options as needed */}
                     </select>
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
+                    <input
+                        type="tel"
+                        name="phon"
+                        onChange={(e) => setphone(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your Phone Number"
+                        required
+                    />
                 </div>
 
                 <div className="mb-6">

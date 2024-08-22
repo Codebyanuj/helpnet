@@ -5,13 +5,17 @@ import { doc, getDoc } from "firebase/firestore";
 
 // Importing components for different roles
 import CustomerNavbar from "./components/CustomerNavbar1";
-import WorkerNavbar from "./components/WorkerNavbar";
-// import CustomerHero from "./components/CustomerHero";
-// import WorkerHero from "./components/WorkerHero";
+import Hero from "./components/Hero1";
 import GridContainer from "./components/GridContainer";
 import Footer1 from "./components/Footer1";
+
+// import CustomerHero from "./components/CustomerHero";
+// import WorkerHero from "./components/WorkerHero";
+
+import WorkerNavbar from "./components/WorkerNavbar";
 import WorkerFooter from "./components/WorkerFooter";
-import Hero from "./components/Hero1";
+import WorkerResponse from "./components/WorkerResponse";
+
 
 
 
@@ -57,7 +61,7 @@ const Home = () => {
     }
 
     if (!userRole) {
-        return <a href='/signup'><div>Please sign in to continue.</div></a>; // Or redirect to a login page
+        return <a className='text-4xl justify-center text-center font-mono' href='/login'><div>Please log in to continue.</div></a>; // Or redirect to a login page
     }
 
     return (
@@ -76,6 +80,7 @@ const Home = () => {
                 <>
                     <WorkerNavbar />
                     <Hero />
+                    <WorkerResponse/>
                     <WorkerFooter />
                 </>
             )}

@@ -28,6 +28,8 @@ const GridContainer = () => {
     { image: coding, data: 'Coding' },
   ];
 
+
+  //'workers' is collection name and it is route to it.
   const handleCategoryClick = (category) => {
     navigate(`/workers/${category.toLowerCase()}`);
   };
