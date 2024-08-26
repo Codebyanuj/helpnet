@@ -58,7 +58,9 @@ const Navbar = () => {
         id: doc.id,
         ...doc.data()
       }));
+      
 
+     //saves the array into the bookings of setbookings
       setBookings(bookingsData); // Update bookings state
     } catch (err) {
       setError(err.message); // Handle errors
@@ -225,6 +227,7 @@ const Navbar = () => {
                     {bookings.map((booking) => (
                       <li key={booking.id} className="border border-gray-300 p-2 rounded">
                         <p><strong>Booking ID:</strong> {booking.id}</p>
+                        <p><strong>Worker Namee:</strong> {booking.workerName}</p>
                         <p><strong>Worker:</strong> {booking.workerId}</p>
                         <p><strong>Date:</strong> {booking.date}</p>
                         <p><strong>Status:</strong> {booking.status}</p>

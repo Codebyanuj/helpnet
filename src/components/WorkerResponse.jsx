@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db, auth } from '../firebase'; // Import both db and auth from your Firebase config
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 
-const WorkerResponse = ({ workerId }) => {
+const WorkerResponse = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [workerId, setWorkerId] = useState(null);
 
     useEffect(() => {
-        const fetchBookings = async () => {
+        // Function to fetch bookings
+        const fetchBookings = async (workerId) => {
             try {
-                if (!workerId) {
-                    throw new Error('workerId is undefined');
-                }
-
                 // Query to fetch bookings for the worker that are still pending
                 const q = query(
                     collection(db, 'Bookings'),
@@ -37,8 +35,23 @@ const WorkerResponse = ({ workerId }) => {
             }
         };
 
-        fetchBookings();
-    }, [workerId]);
+        // Listen for authentication state changes
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, set the worker ID and fetch bookings
+                setWorkerId(user.uid);
+                fetchBookings(user.uid);
+            } else {
+                // User is signed out, clear bookings and worker ID
+                setWorkerId(null);
+                setBookings([]);
+                setLoading(false);
+            }
+        });
+
+        // Clean up subscription on component unmount
+        return () => unsubscribe();
+    }, []);
 
     const handleResponse = async (bookingId, response) => {
         try {

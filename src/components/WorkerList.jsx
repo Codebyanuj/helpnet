@@ -112,10 +112,10 @@ const WorkerList = () => {
                         </button>
 
                         {/* Conditionally render the booking form if this worker is selected */}
-                        {selectedWorker === worker.id && customerId &&  (
+                        {selectedWorker === worker.id && worker.name && customerId &&  (
                             <div className="mt-4">
                                 {/* Pass customerId and workerId to the booking component */}
-                                <CustomerBookSlot customerId={customerId} workerId={worker.id}  />
+                                <CustomerBookSlot customerId={customerId} workerId={worker.id} workerName={worker.name} />
                             </div>
                         )}
                     </div>

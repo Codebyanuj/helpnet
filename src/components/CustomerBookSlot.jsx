@@ -49,6 +49,7 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
             await addDoc(collection(db, 'Bookings'), {
                 customerId,
                 workerId,
+                // workerName,
                 date,
                 time,
                 message,
