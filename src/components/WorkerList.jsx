@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'; // Hook to get the category from t
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import CustomerBookSlot from './CustomerBookSlot'; // Import the booking component
+import { getAuth } from 'firebase/auth'; // Import auth to get the current user
 
 const WorkerList = () => {
     // Retrieve the category from the URL parameters
@@ -19,6 +20,9 @@ const WorkerList = () => {
 
     // State to track which worker's booking form is currently open
     const [selectedWorker, setSelectedWorker] = useState(null);
+
+    // State to store the current customer's ID
+    const [customerId, setCustomerId] = useState(null);
 
     // useEffect hook to fetch worker data from Firestore whenever the category changes
     useEffect(() => {
@@ -50,6 +54,20 @@ const WorkerList = () => {
         // Call the function to fetch workers
         fetchWorkers();
     }, [category]); // Re-run effect if the category in the URL changes
+
+    // useEffect hook to fetch the customer ID
+    useEffect(() => {
+        const fetchCustomerId = () => {
+            const auth = getAuth();
+            const currentUser = auth.currentUser;
+
+            if (currentUser) {
+                setCustomerId(currentUser.uid);
+            }
+        };
+
+        fetchCustomerId();
+    }, []);
 
     // Show a loading message while the data is being fetched
     if (loading) {
@@ -94,10 +112,10 @@ const WorkerList = () => {
                         </button>
 
                         {/* Conditionally render the booking form if this worker is selected */}
-                        {selectedWorker === worker.id && (
+                        {selectedWorker === worker.id && customerId &&  (
                             <div className="mt-4">
                                 {/* Pass customerId and workerId to the booking component */}
-                                <CustomerBookSlot customerId="CUSTOMER_ID" workerId={worker.id} />
+                                <CustomerBookSlot customerId={customerId} workerId={worker.id}  />
                             </div>
                         )}
                     </div>
