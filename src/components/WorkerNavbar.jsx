@@ -53,13 +53,13 @@ const WorkerNavbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-green-900 to-black shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl relative">
+    <nav className="bg-gradient-to-r from-blue-900 to-purple-900 shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl relative">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-1">
-          <div className="bg-yellow-500 p-2 rounded-full">
-            <span className="text-white text-2xl font-extrabold font-mono">W</span>
+          <div className="bg-red-500 p-2 rounded-full">
+            <span className="text-white text-2xl font-extrabold font-mono">H</span>
           </div>
-          <span className="text-white text-2xl font-extrabold font-mono">WorkNet</span>
+          <span className="text-white text-2xl font-extrabold font-mono">HelpNet</span>
         </div>
         <div className="hidden md:flex space-x-12 text-lg font-serif">
           <a href="/" className="text-white hover:text-yellow-400 transition duration-300">Home</a>

@@ -17,6 +17,28 @@ const Navbar = () => {
   const db = getFirestore();
 
   useEffect(() => {
+
+
+    const fetchWorkerDetails = async (workerId) => {
+      try {
+          const workerRef = doc(db, 'workers', workerId);
+          const workerDoc = await getDoc(workerRef);
+          if (workerDoc.exists()) {
+              console.log('worker data fetched:', workerDoc.data());
+              return workerDoc.data(); // Return worker data if it exists
+          } else {
+              console.log('No such worker document:', workerId);
+              return null;
+          }
+      } catch (err) {
+          console.error('Error fetching worker details:', err);
+          return null;
+      }
+  };
+
+
+
+
     // Set up listener for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {

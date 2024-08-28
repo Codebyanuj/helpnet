@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 
 const WorkerResponse = () => {
     const [pendingBookings, setPendingBookings] = useState([]);
@@ -10,7 +10,7 @@ const WorkerResponse = () => {
     const [workerId, setWorkerId] = useState(null);
 
     useEffect(() => {
-        // Function to fetch bookings
+        // Function to fetch bookings and corresponding customer details
         const fetchBookings = async (workerId) => {
             try {
                 // Query to fetch bookings for the worker that are either pending or accepted
@@ -31,15 +31,45 @@ const WorkerResponse = () => {
                     getDocs(qAccepted)
                 ]);
 
-                // Map the results to arrays of booking data
-                const pendingData = querySnapshotPending.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
+                // Function to fetch customer details based on customerId
+                const fetchCustomerDetails = async (customerId) => {
+                    try {
+                        const customerRef = doc(db, 'customers', customerId);
+                        const customerDoc = await getDoc(customerRef);
+                        if (customerDoc.exists()) {
+                            console.log('Customer data fetched:', customerDoc.data());
+                            return customerDoc.data(); // Return customer data if it exists
+                        } else {
+                            console.log('No such customer document:', customerId);
+                            return null;
+                        }
+                    } catch (err) {
+                        console.error('Error fetching customer details:', err);
+                        return null;
+                    }
+                };
+
+                // Map the results to arrays of booking data with customer details
+                const pendingData = await Promise.all(querySnapshotPending.docs.map(async (doc) => {
+                    const bookingData = doc.data();
+                    const customerData = await fetchCustomerDetails(bookingData.customerId); // Fetch customer data for each booking
+                    return {
+                        id: doc.id,
+                        ...bookingData,
+                        customerName: customerData ? customerData.name : 'Unknown', // Add customer name to booking data
+                        customerAddress: customerData ? customerData.address : 'Unknown', // Add customer address to booking data
+                    };
                 }));
 
-                const acceptedData = querySnapshotAccepted.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
+                const acceptedData = await Promise.all(querySnapshotAccepted.docs.map(async (doc) => {
+                    const bookingData = doc.data();
+                    const customerData = await fetchCustomerDetails(bookingData.customerId); // Fetch customer data for each booking
+                    return {
+                        id: doc.id,
+                        ...bookingData,
+                        customerName: customerData ? customerData.name : 'Unknown', // Add customer name to booking data
+                        customerAddress: customerData ? customerData.address : 'Unknown', // Add customer address to booking data
+                    };
                 }));
 
                 setPendingBookings(pendingData);
@@ -104,14 +134,16 @@ const WorkerResponse = () => {
     }
 
     return (
-        <div className="p-8 bg-white shadow-md rounded-md max-w-lg mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Pending Booking Requests</h2>
+        <div className="p-8 bg-white shadow-md rounded-md ">
+            <h2 className="text-2xl font-mono font-bold  mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Pending Booking Requests</h2>
             {pendingBookings.length === 0 ? (
                 <p>No pending bookings.</p>
             ) : (
-                <div className="grid grid-cols-1 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-3  mb-10">
                     {pendingBookings.map((booking) => (
                         <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p> {/* Display customer name */}
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p> {/* Display customer address */}
                             <p><strong>Customer ID:</strong> {booking.customerId}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
@@ -135,13 +167,15 @@ const WorkerResponse = () => {
                 </div>
             )}
 
-            <h2 className="text-2xl font-bold mb-6 mt-8">Accepted Booking Requests</h2>
+            <h2 className="text-2xl font-mono font-bold  mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Accepted Booking Requests</h2>
             {acceptedBookings.length === 0 ? (
                 <p>No accepted bookings.</p>
             ) : (
-                <div className="grid grid-cols-1 max-width-7xl gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {acceptedBookings.map((booking) => (
                         <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p> {/* Display customer name */}
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p> {/* Display customer address */}
                             <p><strong>Customer ID:</strong> {booking.customerId}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
