@@ -9,6 +9,7 @@ import Home from "./Home";
 import SignUpForm from "./SignUpForm";
 import Login from "./Login";
 import WorkerSignin from "./WorkerSignup";
+import Bookings from './components/Bookings'
 
 import GridContainer from './components/GridContainer';
 import WorkerList from './components/WorkerList';
@@ -32,6 +33,8 @@ function App() {
           <Route path='/' element={<Home />}></Route>
           <Route path='/Aboutus' element={<AboutUs />}></Route>
           <Route path='/Help' element={<Help />}></Route>
+          <Route path='/Bookings' element={<Bookings />}></Route>
+
           <Route path='/Workernav' element={<Workernav />}></Route>
 
           <Route path='/SignType' element={<SigninType />}></Route>

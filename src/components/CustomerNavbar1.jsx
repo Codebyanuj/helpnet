@@ -19,22 +19,22 @@ const Navbar = () => {
   useEffect(() => {
 
 
-    const fetchWorkerDetails = async (workerId) => {
-      try {
-          const workerRef = doc(db, 'workers', workerId);
-          const workerDoc = await getDoc(workerRef);
-          if (workerDoc.exists()) {
-              console.log('worker data fetched:', workerDoc.data());
-              return workerDoc.data(); // Return worker data if it exists
-          } else {
-              console.log('No such worker document:', workerId);
-              return null;
-          }
-      } catch (err) {
-          console.error('Error fetching worker details:', err);
-          return null;
-      }
-  };
+  //   const fetchWorkerDetails = async (workerId) => {
+  //     try {
+  //         const workerRef = doc(db, 'workers', workerId);
+  //         const workerDoc = await getDoc(workerRef);
+  //         if (workerDoc.exists()) {
+  //             console.log('worker data fetched:', workerDoc.data());
+  //             return workerDoc.data(); // Return worker data if it exists
+  //         } else {
+  //             console.log('No such worker document:', workerId);
+  //             return null;
+  //         }
+  //     } catch (err) {
+  //         console.error('Error fetching worker details:', err);
+  //         return null;
+  //     }
+  // };
 
 
 
@@ -243,7 +243,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Booking Information */}
-                <h3 className="text-lg font-semibold mb-2">Booking Updates</h3>
+                {/* <h3 className="text-lg font-semibold mb-2">Booking Updates</h3>
                 {bookings.length > 0 ? (
                   <ul className="space-y-2">
                     {bookings.map((booking) => (
@@ -258,10 +258,10 @@ const Navbar = () => {
                   </ul>
                 ) : (
                   <p>No bookings available.</p>
-                )}
+                )} */}
 
                 {/* Settings and Logout Links */}
-                <a href="/settings" className="block mt-4 text-cyan-600 hover:text-cyan-400">Settings</a>
+                <a href="/Bookings" className="block mt-4 text-cyan-600 hover:text-cyan-400">Bookings</a>
                 <a href="/logout" className="block mt-2 text-red-600 hover:text-red-400">Logout</a>
               </div>
             ) : (
