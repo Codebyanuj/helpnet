@@ -8,6 +8,8 @@ const WorkerResponse = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState(null);
+    const [showDialog, setShowDialog] = useState(false); // State for showing the dialog
+    const [bookingToComplete, setBookingToComplete] = useState(null); // State to track which booking is being completed
 
     useEffect(() => {
         // Function to fetch bookings and corresponding customer details
@@ -118,11 +120,37 @@ const WorkerResponse = () => {
                 setAcceptedBookings((prev) => [...prev, { ...acceptedBooking, status: 'accepted' }]);
             } else if (response === 'declined') {
                 setPendingBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
+            } else if (response === 'completed') {
+                // Update the status locally without removing the booking from the list
+                setAcceptedBookings((prev) =>
+                    prev.map((booking) =>
+                        booking.id === bookingId ? { ...booking, status: 'completed' } : booking
+                    )
+                );
             }
         } catch (error) {
             console.error('Error updating booking status:', error);
             setError(`Error: ${error.message}`);
         }
+    };
+
+    const handleComplete = (bookingId) => {
+        // Set the booking to be completed and show the dialog
+        setBookingToComplete(bookingId);
+        setShowDialog(true);
+    };
+
+    const confirmCompletion = () => {
+        if (bookingToComplete) {
+            handleResponse(bookingToComplete, 'completed');
+            setShowDialog(false);
+            setBookingToComplete(null);
+        }
+    };
+
+    const cancelCompletion = () => {
+        setShowDialog(false);
+        setBookingToComplete(null);
     };
 
     if (loading) {
@@ -180,9 +208,45 @@ const WorkerResponse = () => {
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                             <p><strong>Message:</strong> {booking.message || 'No message provided'}</p>
-                            <p><strong>Status:</strong> Accepted</p>
+                            <div className="mt-4 flex justify-around">
+                                {booking.status === 'completed' ? (
+                                    <p className="text-green-500 font-bold">Booking Completed</p>
+                                ) : (
+                                    <button
+                                        onClick={() => handleComplete(booking.id)}
+                                        className={`py-2 px-4 rounded-lg transition ${booking.status === 'completed' ? 'bg-gray-500 text-white cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'
+                                            }`}
+                                        disabled={booking.status === 'completed'} // Disable button if booking is completed
+                                    >
+                                        Completed
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Dialog Box for Confirming Completion */}
+            {showDialog && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <p>Are you sure you want to mark this booking as completed?</p>
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                onClick={confirmCompletion}
+                                className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2"
+                            >
+                                Yes
+                            </button>
+                            <button
+                                onClick={cancelCompletion}
+                                className="bg-red-500 text-white py-2 px-4 rounded-lg"
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
