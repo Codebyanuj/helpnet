@@ -8,6 +8,8 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState(null);
     const [isSlotAvailable, setIsSlotAvailable] = useState(true);
+    const [location, setLocation] = useState({ latitude: null, longitude: null });
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (date && time) {
@@ -15,10 +17,28 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
         }
     }, [date, time]);
 
+    useEffect(() => {
+        // Fetch the customer's location when the component mounts
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocation({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
+                },
+                (error) => {
+                    setError(error.message);
+                }
+            );
+        } else {
+            setError('Geolocation is not supported by this browser.');
+        }
+    }, []);
+
     // Function to check if the slot is available
     const checkSlotAvailability = async (selectedDate, selectedTime) => {
         try {
-            // Query to check if a booking already exists for the same worker, date, and time
             const q = query(
                 collection(db, 'Bookings'),
                 where('workerId', '==', workerId),
@@ -26,8 +46,6 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                 where('time', '==', selectedTime)
             );
             const querySnapshot = await getDocs(q);
-
-            // If there's a matching document, the slot is already booked
             setIsSlotAvailable(querySnapshot.empty);
         } catch (error) {
             console.error('Error checking slot availability:', error);
@@ -45,15 +63,15 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
         }
 
         try {
-            // Create a new booking document in Firestore
             await addDoc(collection(db, 'Bookings'), {
                 customerId,
                 workerId,
-                // workerName,
                 date,
                 time,
                 message,
                 status: 'pending',
+                latitude: location.latitude,
+                longitude: location.longitude,
                 timestamp: serverTimestamp(),
             });
 
@@ -75,6 +93,8 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                     {status}
                 </p>
             )}
+
+            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -105,7 +125,6 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                     />
                 </div>
 
-                {/* Slot availability message */}
                 {!isSlotAvailable && (
                     <p className="text-red-500 text-sm mb-4">This slot is already booked. Please choose another time.</p>
                 )}

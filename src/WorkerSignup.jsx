@@ -10,11 +10,13 @@ const WorkerSignup = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [typeOfWork, setTypeOfWork] = useState('');
-    const [phone,setphone ] = useState('');
+    const [phone, setPhone] = useState('');
+    const [charges, setCharges] = useState('');  // New state for charges
+    const [workingDays, setWorkingDays] = useState([]); // New state for working days
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const navigate = useNavigate();  // Initialize useNavigate
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,17 +34,15 @@ const WorkerSignup = () => {
                 address: address,
                 phone: phone,
                 typeOfWork: typeOfWork,
+                charges: charges, // Add charges to worker data
+                workingDays: workingDays, // Add working days to worker data
                 role: 'worker'
-                //field name:name frrom html input field
-
             };
 
             await setDoc(doc(db, 'Workers', user.uid), workerData);
 
             setSuccess("Worker's account created successfully!");
-
-            // Redirect to home page after successful signup
-            navigate('/');
+            navigate('/'); // Redirect to home page after successful signup
 
         } catch (err) {
             setError(err.message);
@@ -50,9 +50,19 @@ const WorkerSignup = () => {
         }
     };
 
+    // Function to handle working days checkboxes
+    const handleWorkingDaysChange = (e) => {
+        const { value, checked } = e.target;
+        if (checked) {
+            setWorkingDays([...workingDays, value]);
+        } else {
+            setWorkingDays(workingDays.filter(day => day !== value));
+        }
+    };
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-200">
-            <form className="bg-white shadow-md rounded-lg px-14 pt-6 pb-8 mb-4 w-full max-w-sm" onSubmit={handleSubmit}>
+            <form className="bg-white shadow-md rounded-lg px-14 pt-6 pb-8 mb-4 w-full max-w-md mt-3" onSubmit={handleSubmit}>
                 <h2 className="text-3xl font-bold mb-6 text-center font-mono">Worker Sign Up</h2>
 
                 {error && <p className="text-red-500 text-center">{error}</p>}
@@ -109,9 +119,9 @@ const WorkerSignup = () => {
                         <option value="carpenter">Carpenter</option>
                         <option value="chef">Chef</option>
                         <option value="maid">Maid</option>
-                        <option value="guard">Painter</option>
+                        <option value="painter">Painter</option>
                         <option value="gardener">Gardener</option>
-                        <option value="coding">Coder</option>
+                        <option value="coder">Coder</option>
                         {/* Add more options as needed */}
                     </select>
                 </div>
@@ -121,11 +131,58 @@ const WorkerSignup = () => {
                     <input
                         type="tel"
                         name="phone"
-                        onChange={(e) => setphone(e.target.value)}
+                        onChange={(e) => setPhone(e.target.value)}
                         className="w-full px-3 py-2 border rounded border-gray-300"
                         placeholder="Enter your Phone Number"
                         required
                     />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="charges" className="block text-gray-700 text-sm font-bold mb-2">Charges per Hour:</label>
+                    <input
+                        type="number"
+                        name="charges"
+                        onChange={(e) => setCharges(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your charges per hour"
+                        required
+                    />
+                </div>
+
+                {/* Working Days Selection */}
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Working Days:</label>
+                    <div className="grid grid-cols-3 gap-2">
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Monday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Monday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Tuesday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Tuesday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Wednesday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Wednesday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Thursday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Thursday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Friday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Friday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Saturday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Saturday</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input type="checkbox" value="Sunday" onChange={handleWorkingDaysChange} />
+                            <span className="ml-2">Sunday</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div className="mb-6">

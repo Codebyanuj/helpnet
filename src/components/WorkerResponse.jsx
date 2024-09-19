@@ -1,21 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+
+// Define your Google Maps API Key here
+const API_KEY = 'AIzaSyC5dzGT4q82H8A0X63jToYoYKu_vuo3F6I'; // Replace with your actual API key
+
+const mapContainerStyle = {
+    width: '100%',
+    height: '300px',
+};
 
 const WorkerResponse = () => {
     const [pendingBookings, setPendingBookings] = useState([]);
     const [acceptedBookings, setAcceptedBookings] = useState([]);
+    const [completedBookings, setCompletedBookings] = useState([]);
+    const [doneBookings, setDoneBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState(null);
-    const [showDialog, setShowDialog] = useState(false); // State for showing the dialog
-    const [bookingToComplete, setBookingToComplete] = useState(null); // State to track which booking is being completed
+    const [rating, setRating] = useState(5);
+    const [showDialog, setShowDialog] = useState(false);
+    const [bookingToComplete, setBookingToComplete] = useState(null);
+    const [mapVisible, setMapVisible] = useState(false); // State to control map visibility
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: API_KEY, // Google Maps API Key
+    });
 
     useEffect(() => {
-        // Function to fetch bookings and corresponding customer details
         const fetchBookings = async (workerId) => {
             try {
-                // Query to fetch bookings for the worker that are either pending or accepted
+                // Fetch bookings for different statuses
                 const qPending = query(
                     collection(db, 'Bookings'),
                     where('workerId', '==', workerId),
@@ -28,21 +44,32 @@ const WorkerResponse = () => {
                     where('status', '==', 'accepted')
                 );
 
-                const [querySnapshotPending, querySnapshotAccepted] = await Promise.all([
+                const qCompleted = query(
+                    collection(db, 'Bookings'),
+                    where('workerId', '==', workerId),
+                    where('status', '==', 'completed')
+                );
+
+                const qDone = query(
+                    collection(db, 'Bookings'),
+                    where('workerId', '==', workerId),
+                    where('status', '==', 'done')
+                );
+
+                const [querySnapshotPending, querySnapshotAccepted, querySnapshotCompleted, querySnapshotDone] = await Promise.all([
                     getDocs(qPending),
-                    getDocs(qAccepted)
+                    getDocs(qAccepted),
+                    getDocs(qCompleted),
+                    getDocs(qDone)
                 ]);
 
-                // Function to fetch customer details based on customerId
                 const fetchCustomerDetails = async (customerId) => {
                     try {
                         const customerRef = doc(db, 'customers', customerId);
                         const customerDoc = await getDoc(customerRef);
                         if (customerDoc.exists()) {
-                            console.log('Customer data fetched:', customerDoc.data());
-                            return customerDoc.data(); // Return customer data if it exists
+                            return customerDoc.data();
                         } else {
-                            console.log('No such customer document:', customerId);
                             return null;
                         }
                     } catch (err) {
@@ -51,31 +78,29 @@ const WorkerResponse = () => {
                     }
                 };
 
-                // Map the results to arrays of booking data with customer details
-                const pendingData = await Promise.all(querySnapshotPending.docs.map(async (doc) => {
+                const mapBookingData = async (doc) => {
                     const bookingData = doc.data();
-                    const customerData = await fetchCustomerDetails(bookingData.customerId); // Fetch customer data for each booking
+                    const customerData = await fetchCustomerDetails(bookingData.customerId);
                     return {
                         id: doc.id,
                         ...bookingData,
-                        customerName: customerData ? customerData.name : 'Unknown', // Add customer name to booking data
-                        customerAddress: customerData ? customerData.address : 'Unknown', // Add customer address to booking data
+                        customerName: customerData ? customerData.name : 'Unknown',
+                        customerAddress: customerData ? customerData.address : 'Unknown',
+                        latitude: bookingData.latitude || null,
+                        longitude: bookingData.longitude || null,
+                        customerRating: bookingData.rating || 'No rating given',
                     };
-                }));
+                };
 
-                const acceptedData = await Promise.all(querySnapshotAccepted.docs.map(async (doc) => {
-                    const bookingData = doc.data();
-                    const customerData = await fetchCustomerDetails(bookingData.customerId); // Fetch customer data for each booking
-                    return {
-                        id: doc.id,
-                        ...bookingData,
-                        customerName: customerData ? customerData.name : 'Unknown', // Add customer name to booking data
-                        customerAddress: customerData ? customerData.address : 'Unknown', // Add customer address to booking data
-                    };
-                }));
+                const pendingData = await Promise.all(querySnapshotPending.docs.map(mapBookingData));
+                const acceptedData = await Promise.all(querySnapshotAccepted.docs.map(mapBookingData));
+                const completedData = await Promise.all(querySnapshotCompleted.docs.map(mapBookingData));
+                const doneData = await Promise.all(querySnapshotDone.docs.map(mapBookingData));
 
                 setPendingBookings(pendingData);
                 setAcceptedBookings(acceptedData);
+                setCompletedBookings(completedData);
+                setDoneBookings(doneData);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -84,36 +109,28 @@ const WorkerResponse = () => {
             }
         };
 
-        // Listen for authentication state changes
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
-                // User is signed in, set the worker ID and fetch bookings
                 setWorkerId(user.uid);
                 fetchBookings(user.uid);
             } else {
-                // User is signed out, clear bookings and worker ID
                 setWorkerId(null);
                 setPendingBookings([]);
                 setAcceptedBookings([]);
+                setCompletedBookings([]);
+                setDoneBookings([]);
                 setLoading(false);
             }
         });
 
-        // Clean up subscription on component unmount
         return () => unsubscribe();
     }, []);
 
     const handleResponse = async (bookingId, response) => {
         try {
-            // Reference to the specific booking document
             const bookingRef = doc(db, 'Bookings', bookingId);
+            await updateDoc(bookingRef, { status: response });
 
-            // Update the booking status based on the worker's response
-            await updateDoc(bookingRef, {
-                status: response,
-            });
-
-            // Update the local state to reflect the change immediately
             if (response === 'accepted') {
                 setPendingBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
                 const acceptedBooking = pendingBookings.find((booking) => booking.id === bookingId);
@@ -121,12 +138,9 @@ const WorkerResponse = () => {
             } else if (response === 'declined') {
                 setPendingBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
             } else if (response === 'completed') {
-                // Update the status locally without removing the booking from the list
-                setAcceptedBookings((prev) =>
-                    prev.map((booking) =>
-                        booking.id === bookingId ? { ...booking, status: 'completed' } : booking
-                    )
-                );
+                setAcceptedBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
+                const completedBooking = acceptedBookings.find((booking) => booking.id === bookingId);
+                setCompletedBookings((prev) => [...prev, { ...completedBooking, status: 'completed' }]);
             }
         } catch (error) {
             console.error('Error updating booking status:', error);
@@ -135,7 +149,6 @@ const WorkerResponse = () => {
     };
 
     const handleComplete = (bookingId) => {
-        // Set the booking to be completed and show the dialog
         setBookingToComplete(bookingId);
         setShowDialog(true);
     };
@@ -153,6 +166,20 @@ const WorkerResponse = () => {
         setBookingToComplete(null);
     };
 
+    const renderGoogleMap = (latitude, longitude) => {
+        return isLoaded && latitude && longitude ? (
+            <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={{ lat: latitude, lng: longitude }}
+                zoom={12}
+            >
+                <Marker position={{ lat: latitude, lng: longitude }} />
+            </GoogleMap>
+        ) : (
+            <p>Loading map...</p>
+        );
+    };
+
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -162,30 +189,36 @@ const WorkerResponse = () => {
     }
 
     return (
-        <div className="p-8 bg-white shadow-md rounded-md ">
-            <h2 className="text-2xl font-mono font-bold  mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Pending Booking Requests</h2>
+        <div className="p-8 bg-white shadow-md rounded-md">
+            {/* Pending Bookings */}
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Pending Bookings</h2>
             {pendingBookings.length === 0 ? (
                 <p>No pending bookings.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-3  mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {pendingBookings.map((booking) => (
                         <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                            <p><strong>Customer Name:</strong> {booking.customerName}</p> {/* Display customer name */}
-                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p> {/* Display customer address */}
-                            <p><strong>Customer ID:</strong> {booking.customerId}</p>
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p>
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
-                            <p><strong>Message:</strong> {booking.message || 'No message provided'}</p>
-                            <div className="mt-4 flex justify-around">
+                            <button
+                                onClick={() => setMapVisible(!mapVisible)}
+                                className="bg-blue-500 text-white rounded px-4 py-2 mt-2"
+                            >
+                                {mapVisible ? 'Hide Map' : 'Show Map'}
+                            </button>
+                            {mapVisible && renderGoogleMap(booking.latitude, booking.longitude)}
+                            <div className="mt-4">
                                 <button
                                     onClick={() => handleResponse(booking.id, 'accepted')}
-                                    className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition"
+                                    className="bg-green-500 text-white rounded px-4 py-2 mt-2"
                                 >
                                     Accept
                                 </button>
                                 <button
                                     onClick={() => handleResponse(booking.id, 'declined')}
-                                    className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
+                                    className="bg-red-500 text-white rounded px-4 py-2 mt-2"
                                 >
                                     Decline
                                 </button>
@@ -195,56 +228,118 @@ const WorkerResponse = () => {
                 </div>
             )}
 
-            <h2 className="text-2xl font-mono font-bold  mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Accepted Booking Requests</h2>
+            {/* Declined Bookings
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Declined Bookings</h2>
+            {declinedBookings.length === 0 ? (
+                <p>No declined bookings.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    {declinedBookings.map((booking) => (
+                        <div key={booking.id} className="bg-red-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p>
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
+                            <p><strong>Date:</strong> {booking.date}</p>
+                            <p><strong>Time:</strong> {booking.time}</p>
+                            <button
+                                onClick={() => setMapVisible(!mapVisible)}
+                                className="bg-blue-500 text-white rounded px-4 py-2 mt-2"
+                            >
+                                {mapVisible ? 'Hide Map' : 'Show Map'}
+                            </button>
+                            {mapVisible && renderGoogleMap(booking.latitude, booking.longitude)}
+                        </div>
+                    ))}
+                </div>
+            )} */}
+
+            {/* Accepted Bookings */}
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Accepted Bookings</h2>
             {acceptedBookings.length === 0 ? (
                 <p>No accepted bookings.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {acceptedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-sm">
-                            <p><strong>Customer Name:</strong> {booking.customerName}</p> {/* Display customer name */}
-                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p> {/* Display customer address */}
-                            <p><strong>Customer ID:</strong> {booking.customerId}</p>
+                        <div key={booking.id} className="bg-yellow-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p>
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
-                            <p><strong>Message:</strong> {booking.message || 'No message provided'}</p>
-                            <div className="mt-4 flex justify-around">
-                                {booking.status === 'completed' ? (
-                                    <p className="text-green-500 font-bold">Booking Completed</p>
-                                ) : (
-                                    <button
-                                        onClick={() => handleComplete(booking.id)}
-                                        className={`py-2 px-4 rounded-lg transition ${booking.status === 'completed' ? 'bg-gray-500 text-white cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'
-                                            }`}
-                                        disabled={booking.status === 'completed'} // Disable button if booking is completed
-                                    >
-                                        Completed
-                                    </button>
-                                )}
+                            <button
+                                onClick={() => setMapVisible(!mapVisible)}
+                                className="bg-blue-500 text-white rounded px-4 py-2 mt-2"
+                            >
+                                {mapVisible ? 'Hide Map' : 'Show Map'}
+                            </button>
+                            {mapVisible && renderGoogleMap(booking.latitude, booking.longitude)}
+                            <div className="mt-4">
+                                <button
+                                    onClick={() => handleComplete(booking.id)}
+                                    className="bg-yellow-500 text-white rounded px-4 py-2 mt-2"
+                                >
+                                    Mark as Completed
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Dialog Box for Confirming Completion */}
+            {/* Completed Bookings */}
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Completed Bookings</h2>
+            {completedBookings.length === 0 ? (
+                <p>No completed bookings.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    {completedBookings.map((booking) => (
+                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p>
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
+                            <p><strong>Date:</strong> {booking.date}</p>
+                            <p><strong>Time:</strong> {booking.time}</p>
+                            <button
+                                onClick={() => setMapVisible(!mapVisible)}
+                                className="bg-blue-500 text-white rounded px-4 py-2 mt-2"
+                            >
+                                {mapVisible ? 'Hide Map' : 'Show Map'}
+                            </button>
+                            {mapVisible && renderGoogleMap(booking.latitude, booking.longitude)}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Done Bookings */}
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Done Bookings</h2>
+            {doneBookings.length === 0 ? (
+                <p>No done bookings.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    {doneBookings.map((booking) => (
+                        <div key={booking.id} className="bg-blue-100 p-4 rounded-lg shadow-sm">
+                            <p><strong>Customer Name:</strong> {booking.customerName}</p>
+                            <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
+                            <p><strong>Date:</strong> {booking.date}</p>
+                            <p><strong>Time:</strong> {booking.time}</p>
+                            <button
+                                onClick={() => setMapVisible(!mapVisible)}
+                                className="bg-blue-500 text-white rounded px-4 py-2 mt-2"
+                            >
+                                {mapVisible ? 'Hide Map' : 'Show Map'}
+                            </button>
+                            {mapVisible && renderGoogleMap(booking.latitude, booking.longitude)}
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {showDialog && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
                     <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 className="text-lg font-semibold">Confirm Completion</h3>
                         <p>Are you sure you want to mark this booking as completed?</p>
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={confirmCompletion}
-                                className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2"
-                            >
-                                Yes
-                            </button>
-                            <button
-                                onClick={cancelCompletion}
-                                className="bg-red-500 text-white py-2 px-4 rounded-lg"
-                            >
-                                No
-                            </button>
+                        <div className="mt-4">
+                            <button onClick={confirmCompletion} className="bg-green-500 text-white rounded px-4 py-2 mr-2">Yes</button>
+                            <button onClick={cancelCompletion} className="bg-red-500 text-white rounded px-4 py-2">No</button>
                         </div>
                     </div>
                 </div>

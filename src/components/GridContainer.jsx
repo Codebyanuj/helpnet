@@ -51,7 +51,7 @@ const GridContainer = () => {
         {boxes.map((box, index) => (
           <div
             key={index}
-            className="bg-gray-200 p-6 px-4 py-6 h-auto mb-4 w-full sm:w-40 md:w-44 flex flex-col items-center justify-center text-center rounded-lg cursor-pointer hover:bg-gray-300 transition duration-300"
+            className="bg-gray-200 p-6 px-4 py-6 h-auto mb-4 w-full sm:w-40 md:w-44 flex flex-col items-center shadow-lg justify-center text-center rounded-lg cursor-pointer ursor-pointer hover:bg-[#ffef3e] transition duration-300 transform hover:scale-125 hover:shadow-lg "
             onClick={() => handleCategoryClick(box.data)}
           >
             <img src={box.image} alt={`${box.data} icon`} className="h-22 w-20 mb-6" />

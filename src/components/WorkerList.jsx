@@ -96,11 +96,13 @@ const WorkerList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Loop through the workers array and display each worker's details */}
                 {workers.map((worker) => (
-                    <div key={worker.id} className="bg-gray-100 p-4 rounded-lg">
+                    <div key={worker.id} className="bg-gray-200 p-4 rounded-lg">
                         <p className="font-bold">{worker.name}</p>
-                        <p className="text-sm">Type of Work: {worker.typeOfWork}</p>
-                        <p className="text-sm">Address: {worker.address}</p>
-                        <p className="text-sm">Email: {worker.email}</p>
+                        <p className="text-bold">Type of Work: {worker.typeOfWork}</p>
+                        <p className="text-bold">Address: {worker.address}</p>
+                        <p className="text-bold">Email: {worker.email}</p>
+                        <p className="text-bold">Charges: {worker.charges}</p>
+                        {/* <p className="text-bold">Working Days: {worker.workingDays.join(', ')|| 'No Days available'}</p> */}
 
                         {/* Button to show or hide the booking form */}
                         <button 
