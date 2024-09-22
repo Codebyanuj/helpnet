@@ -6,56 +6,33 @@ import CustomerBookSlot from './CustomerBookSlot'; // Import the booking compone
 import { getAuth } from 'firebase/auth'; // Import auth to get the current user
 
 const WorkerList = () => {
-    // Retrieve the category from the URL parameters
     const { category } = useParams();
-
-    // State to store the list of workers
     const [workers, setWorkers] = useState([]);
-
-    // State to manage loading status
     const [loading, setLoading] = useState(true);
-
-    // State to handle any errors during data fetching
     const [error, setError] = useState(null);
-
-    // State to track which worker's booking form is currently open
     const [selectedWorker, setSelectedWorker] = useState(null);
-
-    // State to store the current customer's ID
     const [customerId, setCustomerId] = useState(null);
 
-    // useEffect hook to fetch worker data from Firestore whenever the category changes
     useEffect(() => {
         const fetchWorkers = async () => {
             try {
-                // Create a query to filter workers by the type of work (category)
                 const q = query(collection(db, 'Workers'), where('typeOfWork', '==', category));
-
-                // Fetch the documents matching the query
                 const querySnapshot = await getDocs(q);
-
-                // Map the fetched documents to an array of worker data
                 const workersData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-
-                // Update the state with the fetched workers
                 setWorkers(workersData);
                 setLoading(false);
             } catch (err) {
-                // Handle any errors that occur during data fetching
                 setError(err.message);
                 setLoading(false);
-                console.error("Error fetching workers data:", err);
             }
         };
 
-        // Call the function to fetch workers
         fetchWorkers();
-    }, [category]); // Re-run effect if the category in the URL changes
+    }, [category]);
 
-    // useEffect hook to fetch the customer ID
     useEffect(() => {
         const fetchCustomerId = () => {
             const auth = getAuth();
@@ -69,54 +46,48 @@ const WorkerList = () => {
         fetchCustomerId();
     }, []);
 
-    // Show a loading message while the data is being fetched
     if (loading) {
         return <p>Loading...</p>;
     }
 
-    // Show an error message if there was an error during data fetching
     if (error) {
         return <p>Error: {error}</p>;
     }
 
-    // Function to handle the click event for the "Book Now" button
     const handleBookNowClick = (workerId) => {
-        // Toggle the booking form: if the same worker is clicked again, close the form
         setSelectedWorker(workerId === selectedWorker ? null : workerId);
     };
 
     return (
-        <div className="p-8">
-            {/* Display the category title */}
-            <h2 className="text-2xl font-bold mb-6">
+        <div className="p-8 bg-gray-100 min-h-screen font-mono">
+            <h2 className="text-3xl font-extrabold mb-8 text-gray-600">
                 {category.charAt(0).toUpperCase() + category.slice(1)}s Available
             </h2>
 
-            {/* Display a grid of worker cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {/* Loop through the workers array and display each worker's details */}
                 {workers.map((worker) => (
-                    <div key={worker.id} className="bg-gray-200 p-4 rounded-lg">
-                        <p className="font-bold">{worker.name}</p>
-                        <p className="text-bold">Type of Work: {worker.typeOfWork}</p>
-                        <p className="text-bold">Address: {worker.address}</p>
-                        <p className="text-bold">Email: {worker.email}</p>
-                        <p className="text-bold">Charges: {worker.charges}</p>
-                        {/* <p className="text-bold">Working Days: {worker.workingDays.join(', ')|| 'No Days available'}</p> */}
+                    <div
+                        key={worker.id}
+                        className="bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105 hover:shadow-gray-600 hover:bg-blue-50"
+                        style={{
+                            transition: 'transform 0.3s, box-shadow 0.3s, background-color 0.3s'
+                        }}
+                    >
+                        <p className="font-semibold text-lg text-gray-800">{worker.name}</p>
+                        <p className="text-sm text-black">Type of Work: {worker.typeOfWork}</p>
+                        <p className="text-sm text-black">Address: {worker.address}</p>
+                        <p className="text-sm text-black">Email: {worker.email}</p>
+                        <p className="text-sm text-black">Charges: {worker.charges}</p>
 
-                        {/* Button to show or hide the booking form */}
-                        <button 
-                            className="mt-4 bg-blue-500 text-white py-1 px-3 rounded-lg"
+                        <button
+                            className="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-purple-600"
                             onClick={() => handleBookNowClick(worker.id)}
                         >
-                            {/* Toggle button text based on whether the form is open */}
                             {selectedWorker === worker.id ? 'Hide Booking' : 'Book Now'}
                         </button>
 
-                        {/* Conditionally render the booking form if this worker is selected */}
-                        {selectedWorker === worker.id && worker.name && customerId &&  (
+                        {selectedWorker === worker.id && worker.name && customerId && (
                             <div className="mt-4">
-                                {/* Pass customerId and workerId to the booking component */}
                                 <CustomerBookSlot customerId={customerId} workerId={worker.id} workerName={worker.name} />
                             </div>
                         )}

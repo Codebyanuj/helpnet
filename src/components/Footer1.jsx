@@ -3,7 +3,7 @@ import user from '../components/Icons/user.png';
 
 const Footer = () => {
     return (
-        <footer className="bg-gradient-to-b to-gray-900 to 50% from-lime-900  text-white rounded-lg">
+        <footer className="bg-gradient-to-b  from-purple-700 to-gray-900    text-white rounded-lg">
             <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
                 <div className="md:flex md:justify-between">
                     <div className="flex items-center space-x-2">

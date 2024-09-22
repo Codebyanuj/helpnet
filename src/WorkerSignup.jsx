@@ -119,8 +119,8 @@ const WorkerSignup = () => {
                         <option value="carpenter">Carpenter</option>
                         <option value="chef">Chef</option>
                         <option value="maid">Maid</option>
-                        <option value="painter">Painter</option>
-                        <option value="gardener">Gardener</option>
+                        <option value="guard">Guard</option>
+                        <option value="contracter">Contracter</option>
                         <option value="coder">Coder</option>
                         {/* Add more options as needed */}
                     </select>

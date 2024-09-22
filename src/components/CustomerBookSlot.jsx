@@ -85,20 +85,20 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-bold mb-4">Book a Slot</h3>
+        <div className="bg-gradient-to-b from-blue-100 to-purple-200 p-6 border-gray-600 border-4 rounded-xl shadow-xl max-w-lg mx-auto">
+            <h3 className="text-2xl font-extrabold mb-6 text-blue-700">Book a Slot</h3>
 
             {status && (
-                <p className={`text-sm ${status.includes('Error') ? 'text-red-500' : 'text-green-500'}`}>
+                <p className={`text-sm ${status.includes('Error') ? 'text-red-500' : 'text-green-500'} mb-4`}>
                     {status}
                 </p>
             )}
 
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="relative">
+                    <label htmlFor="date" className="block text-sm font-semibold text-gray-700">
                         Select Date
                     </label>
                     <input
@@ -106,13 +106,13 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                         id="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                         required
                     />
                 </div>
 
-                <div className="mb-4">
-                    <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+                <div className="relative">
+                    <label htmlFor="time" className="block text-sm font-semibold text-gray-700">
                         Select Time
                     </label>
                     <input
@@ -120,7 +120,7 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                         id="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                         required
                     />
                 </div>
@@ -129,22 +129,22 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                     <p className="text-red-500 text-sm mb-4">This slot is already booked. Please choose another time.</p>
                 )}
 
-                <div className="mb-4">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                <div className="relative">
+                    <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
                         Message (Optional)
                     </label>
                     <textarea
                         id="message"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                         rows="3"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                    className="w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 focus:outline-none"
                     disabled={!isSlotAvailable}
                 >
                     Submit Booking

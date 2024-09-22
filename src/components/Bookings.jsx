@@ -21,8 +21,8 @@ const CustomerBookings = () => {
 
                 if (workerDoc.exists()) {
                     const workerData = workerDoc.data();
-                    const { name, typeOfWork } = workerData; // Destructure the fields 'name' and 'TypeofWork'
-                    return { name, typeOfWork }; // Return both name and TypeofWork
+                    const { name, typeOfWork,phone } = workerData; // Destructure the fields 'name' and 'TypeofWork'
+                    return { name, typeOfWork,phone }; // Return both name and TypeofWork
                 } else {
                     console.log('No such worker!');
                     return { name: 'Unknown Worker', typeOfWork: 'Unknown Work' };
@@ -112,17 +112,18 @@ const CustomerBookings = () => {
     }
 
     return (
-        <div className="p-8 bg-white shadow-md rounded-md">
+        <div className="p-8 bg-white shadow-md rounded-md font-mono">
             {/* Pending Bookings */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Pending Bookings</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Pending Bookings</h2>
             {pendingBookings.length === 0 ? (
                 <p>No pending bookings.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {pendingBookings.map((booking) => (
-                        <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-md shadow-orange-950">
                             <p><strong>Worker Name:</strong> {booking.workerDetails.name}</p>
                             <p><strong>TypeofWork:</strong> {booking.workerDetails?.typeOfWork || 'Unknown Work'}</p>
+                            <p><strong>Phone Number:</strong> {booking.workerDetails.phone}</p>
                             <p><strong>Booking Status:</strong> {booking.status}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
@@ -132,15 +133,16 @@ const CustomerBookings = () => {
             )}
 
             {/* Declined Bookings */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Declined Bookings</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Declined Bookings</h2>
             {declinedBookings.length === 0 ? (
                 <p>No declined bookings.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {declinedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-red-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-red-100 p-4 rounded-lg shadow-md shadow-orange-950">
                             <p><strong>Worker Name:</strong> {booking.workerDetails.name}</p>
                             <p><strong>TypeofWork:</strong> {booking.workerDetails?.typeOfWork || 'Unknown Work'}</p>
+                            <p><strong>Phone Number:</strong> {booking.workerDetails.phone}</p>
                             <p><strong>Booking Status:</strong> {booking.status}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
@@ -150,15 +152,16 @@ const CustomerBookings = () => {
             )}
 
             {/* Accepted Bookings */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Accepted Bookings</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Accepted Bookings</h2>
             {acceptedBookings.length === 0 ? (
                 <p>No accepted bookings.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {acceptedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-md shadow-orange-950">
                             <p><strong>Worker Name:</strong> {booking.workerDetails.name}</p>
                             <p><strong>TypeofWork:</strong> {booking.workerDetails?.typeOfWork || 'Unknown Work'}</p>
+                            <p><strong>Phone Number:</strong> {booking.workerDetails.phone}</p>
                             <p><strong>Booking Status:</strong> {booking.status}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
@@ -168,16 +171,17 @@ const CustomerBookings = () => {
             )}
 
             {/* Bookings Ready for Completion */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Bookings Ready for Completion</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Bookings Ready for Completion</h2>
             {doneBookings.length === 0 ? (
                 <p>No bookings to complete.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {doneBookings.map((booking) => (
-                        <div key={booking.id} className="bg-yellow-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-yellow-100 p-4 rounded-lg shadow-md shadow-orange-950">
                             <p><strong>Worker Name:</strong> {booking.workerDetails.name}</p>
                             <p><strong>TypeofWork:</strong> {booking.workerDetails?.typeOfWork || 'Unknown Work'}</p>
                             <p><strong>Booking Status:</strong> {booking.status}</p>
+                            <p><strong>Phone Number:</strong> {booking.workerDetails.phone}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                            
@@ -199,15 +203,16 @@ const CustomerBookings = () => {
             )}
 
             {/* Completed Bookings */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Completed Bookings</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center mt-3 text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Completed Bookings</h2>
             {completedBookings.length === 0 ? (
                 <p>No completed bookings.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {completedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-blue-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-blue-100 p-4 rounded-lg shadow-md shadow-orange-950">
                             <p><strong>Worker Name:</strong> {booking.workerDetails.name}</p>
                             <p><strong>TypeofWork:</strong> {booking.workerDetails?.typeOfWork || 'Unknown Work'}</p>
+                            <p><strong>Phone Number:</strong> {booking.workerDetails.phone}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                             <p><strong>Rating:</strong> {booking.rating}</p>

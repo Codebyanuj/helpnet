@@ -19,22 +19,22 @@ const Navbar = () => {
   useEffect(() => {
 
 
-  //   const fetchWorkerDetails = async (workerId) => {
-  //     try {
-  //         const workerRef = doc(db, 'workers', workerId);
-  //         const workerDoc = await getDoc(workerRef);
-  //         if (workerDoc.exists()) {
-  //             console.log('worker data fetched:', workerDoc.data());
-  //             return workerDoc.data(); // Return worker data if it exists
-  //         } else {
-  //             console.log('No such worker document:', workerId);
-  //             return null;
-  //         }
-  //     } catch (err) {
-  //         console.error('Error fetching worker details:', err);
-  //         return null;
-  //     }
-  // };
+    //   const fetchWorkerDetails = async (workerId) => {
+    //     try {
+    //         const workerRef = doc(db, 'workers', workerId);
+    //         const workerDoc = await getDoc(workerRef);
+    //         if (workerDoc.exists()) {
+    //             console.log('worker data fetched:', workerDoc.data());
+    //             return workerDoc.data(); // Return worker data if it exists
+    //         } else {
+    //             console.log('No such worker document:', workerId);
+    //             return null;
+    //         }
+    //     } catch (err) {
+    //         console.error('Error fetching worker details:', err);
+    //         return null;
+    //     }
+    // };
 
 
 
@@ -80,9 +80,9 @@ const Navbar = () => {
         id: doc.id,
         ...doc.data()
       }));
-      
 
-     //saves the array into the bookings of setbookings
+
+      //saves the array into the bookings of setbookings
       setBookings(bookingsData); // Update bookings state
     } catch (err) {
       setError(err.message); // Handle errors
@@ -102,18 +102,18 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-purple-800 to-gray-900 shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <nav className="bg-purple-800 p-2 mx-3 my-4 border-2 border-gray-700 rounded-xl shadow-lg shadow-gray-900">
+      <div className="max-w-7xl mx-auto flex justify-between items-center ">
         {/* Logo */}
         <div className="flex items-center space-x-1">
           <div className="bg-cyan-500 p-2 rounded-full">
-            <span className="text-white text-2xl font-extrabold font-mono">H</span>
+            <span className="text-white text-xl font-extrabold font-mono ">H</span>
           </div>
-          <span className="text-white text-2xl font-extrabold font-mono">Helpnet</span>
+          <span className="text-white text-xl font-extrabold font-mono">Helpnet</span>
         </div>
 
         {/* Navigation links */}
-        <div className="hidden md:flex space-x-12 text-lg font-serif">
+        <div className="hidden md:flex space-x-12 text-md font-serif">
           <a href="/" className="text-white hover:text-cyan-400 transition duration-300">Home</a>
           <a href="/Aboutus" className="text-white hover:text-cyan-400 transition duration-300">About</a>
           <a href="/Container" className="text-white hover:text-cyan-400 transition duration-300">Categories</a>
@@ -122,24 +122,24 @@ const Navbar = () => {
 
         {/* Right-aligned buttons and Hamburger Menu */}
         <div className="flex items-center space-x-4">
-          {/* Search bar */}
-          <input
+         
+          {/* <input
             type="text"
             placeholder="Search..."
             className="hidden md:block p-2 rounded-full text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          />
+          /> */}
 
           {/* SignIn and Login buttons on large screens */}
           <button
             type="button"
-            className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
+            className="hidden md:flex text-white border-gray-300 border-2 bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
           >
             <a href="/signin">SignIn</a>
           </button>
 
           <button
             type="button"
-            className="text-white bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
+            className="hidden md:flex text-white border-gray-300 border-2 bg-gradient-to-r from-fuchsia-600 via-fuchsia-700 to-fuchsia-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
           >
             <a href="/login">Login</a>
           </button>
@@ -147,10 +147,10 @@ const Navbar = () => {
           {/* Button to open the sidebar which contains user logoo image*/}
           <button
             type="button"
-            className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-2 py-2 text-center"
+            className=" md-flex text-white border-gray-300 border-2 bg-gradient-to-r from-yellow-500 to-yellow-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-2 py-2 text-center"
             onClick={toggleSidebar}
           >
-            <img className='w-10 h-10' src={userIcon} alt="User" />
+            <img className='w-7 h-7' src={userIcon} alt="User" />
           </button>
 
           {/* Hamburger Menu for mobile screens */}
@@ -189,32 +189,32 @@ const Navbar = () => {
           <a href="/help" className="text-white hover:text-cyan-400 transition duration-300">Help</a>
 
           <div className="flex justify-center space-x-4">
-            {!customerProfile ? (
-              <>
-                <button
-                  type="button"
-                  className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
-                >
-                  <a href="/signin">SignIn</a>
-                </button>
+            {/* SignIn button */}
+            <button
+              type="button"
+              className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-7 py-0text-center"
+            >
+              <a href="/signin">SignIn</a>
+            </button>
 
-                <button
-                  type="button"
-                  className="text-white bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-semibold rounded-full text-sm px-7 py-2 text-center"
-                >
-                  <a href="/login">Login</a>
-                </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-2 py-2 text-center"
-                onClick={toggleSidebar}
-              >
-                <img className='w-10 h-10' src={userIcon} alt="User" />
-              </button>
-            )}
+            {/* Login button */}
+            <button
+              type="button"
+              className="text-white bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-semibold rounded-full text-sm py-0 px-7 text-center"
+            >
+              <a href="/login">Login</a>
+            </button>
+
+            {/* User icon button (this opens the sidebar) */}
+            <button
+              type="button"
+              className="text-white bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-semibold rounded-full text-sm px-2 py-2 text-center"
+              onClick={toggleSidebar}
+            >
+              <img className="w-10 h-10" src={userIcon} alt="User" />
+            </button>
           </div>
+
         </div>
       )}
 

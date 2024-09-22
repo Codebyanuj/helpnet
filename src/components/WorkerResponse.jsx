@@ -189,7 +189,7 @@ const WorkerResponse = () => {
     }
 
     return (
-        <div className="p-8 bg-white shadow-md rounded-md">
+        <div className="p-8 bg-white shadow-md rounded-md font-mono">
             {/* Pending Bookings */}
             <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg">Pending Bookings</h2>
             {pendingBookings.length === 0 ? (
@@ -197,7 +197,7 @@ const WorkerResponse = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {pendingBookings.map((booking) => (
-                        <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-gray-100 p-4 rounded-lg shadow-lg shadow-orange-950">
                             <p><strong>Customer Name:</strong> {booking.customerName}</p>
                             <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
@@ -259,7 +259,7 @@ const WorkerResponse = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {acceptedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-yellow-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-yellow-100 p-4 rounded-lg   hover:bg-yellow-200 shadow-lg shadow-orange-950 transition transform hover:scale-105">
                             <p><strong>Customer Name:</strong> {booking.customerName}</p>
                             <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
@@ -291,7 +291,7 @@ const WorkerResponse = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {completedBookings.map((booking) => (
-                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-green-100 p-4 rounded-lg shadow-lg shadow-orange-950">
                             <p><strong>Customer Name:</strong> {booking.customerName}</p>
                             <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
@@ -315,7 +315,7 @@ const WorkerResponse = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     {doneBookings.map((booking) => (
-                        <div key={booking.id} className="bg-blue-100 p-4 rounded-lg shadow-sm">
+                        <div key={booking.id} className="bg-blue-100 p-4 rounded-lg shadow-lg shadow-orange-950">
                             <p><strong>Customer Name:</strong> {booking.customerName}</p>
                             <p><strong>Customer Address:</strong> {booking.customerAddress}</p>
                             <p><strong>Date:</strong> {booking.date}</p>
