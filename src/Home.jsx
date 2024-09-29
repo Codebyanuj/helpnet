@@ -8,6 +8,7 @@ import CustomerNavbar from "./components/CustomerNavbar1";
 import Hero from "./components/Hero1";
 import GridContainer from "./components/GridContainer";
 import Footer1 from "./components/Footer1";
+import { SparklesPreview } from "./components/AceternityUI/Sparkleeffect/spakleComp";
 
 // import CustomerHero from "./components/CustomerHero";
 // import WorkerHero from "./components/WorkerHero";
@@ -71,6 +72,7 @@ const Home = () => {
                 <>
                     <CustomerNavbar />
                     <Hero />
+                    {/* <SparklesPreview></SparklesPreview> */}
                     <GridContainer />
                     <Footer1 />
                 </>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
 
 const CustomerBookSlot = ({ customerId, workerId }) => {
     const [date, setDate] = useState('');
@@ -8,7 +8,9 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
     const [message, setMessage] = useState('');
     const [status, setStatus] = useState(null);
     const [isSlotAvailable, setIsSlotAvailable] = useState(true);
-    const [location, setLocation] = useState({ latitude: null, longitude: null });
+    const [customerLocation, setCustomerLocation] = useState({ latitude: null, longitude: null });
+    const [taskLocation, setTaskLocation] = useState({ latitude: null, longitude: null });
+    const [workerLocation, setWorkerLocation] = useState({ latitude: null, longitude: null });
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -22,7 +24,7 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setLocation({
+                    setCustomerLocation({
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                     });
@@ -35,6 +37,35 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
             setError('Geolocation is not supported by this browser.');
         }
     }, []);
+
+    useEffect(() => {
+        // Fetch and update worker's real-time location
+        const updateWorkerLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    async (position) => {
+                        const currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        };
+                        setWorkerLocation(currentLocation);
+
+                        // Update the worker's location in the Workers collection
+                        const workerRef = doc(db, 'Workers', workerId);
+                        await updateDoc(workerRef, {
+                            location: currentLocation,
+                            timestamp: serverTimestamp(),
+                        });
+                    },
+                    (error) => {
+                        setError(error.message);
+                    }
+                );
+            }
+        };
+
+        updateWorkerLocation();
+    }, [workerId]);
 
     // Function to check if the slot is available
     const checkSlotAvailability = async (selectedDate, selectedTime) => {
@@ -62,6 +93,9 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
             return;
         }
 
+        // Use the customer-provided task location, or default to their current location
+        const finalTaskLocation = taskLocation.latitude && taskLocation.longitude ? taskLocation : customerLocation;
+
         try {
             await addDoc(collection(db, 'Bookings'), {
                 customerId,
@@ -70,8 +104,8 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                 time,
                 message,
                 status: 'pending',
-                latitude: location.latitude,
-                longitude: location.longitude,
+                taskLocation: finalTaskLocation,
+                workerLocation,
                 timestamp: serverTimestamp(),
             });
 
@@ -125,10 +159,6 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                     />
                 </div>
 
-                {!isSlotAvailable && (
-                    <p className="text-red-500 text-sm mb-4">This slot is already booked. Please choose another time.</p>
-                )}
-
                 <div className="relative">
                     <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
                         Message (Optional)
@@ -139,6 +169,26 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                         rows="3"
+                    />
+                </div>
+
+                <div className="relative">
+                    <label htmlFor="taskLocation" className="block text-sm font-semibold text-gray-700">
+                        Task Location (Optional)
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Latitude"
+                        value={taskLocation.latitude || ''}
+                        onChange={(e) => setTaskLocation({ ...taskLocation, latitude: e.target.value })}
+                        className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Longitude"
+                        value={taskLocation.longitude || ''}
+                        onChange={(e) => setTaskLocation({ ...taskLocation, longitude: e.target.value })}
+                        className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                     />
                 </div>
 

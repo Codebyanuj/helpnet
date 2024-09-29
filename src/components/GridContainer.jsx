@@ -35,7 +35,7 @@ const GridContainer = () => {
   };
 
   return (
-    <div className="border-t-8 font-mono px-5">
+    <div className="border-t-8 font-mono px-5 ">
       <div className="text-center pt-6 mb-10">
         <h4 className="mb-4 py-3 text-2xl font-extrabold font-serifs rounded-lg shadow-lg shadow-yellow-950 text-gray-900 md:text-3xl lg:text-4xl  bg-gradient-to-r from-blue-300 to-purple-300">
           <span className="text-transparent  bg-clip-text bg-gradient-to-r from-purple-700 to-emerald-900">
