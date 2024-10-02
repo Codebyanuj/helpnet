@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; // Hook to get the category from the URL
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 import CustomerBookSlot from './CustomerBookSlot'; // Import the booking component
 import { getAuth } from 'firebase/auth'; // Import auth to get the current user
 
@@ -54,8 +54,29 @@ const WorkerList = () => {
         return <p>Error: {error}</p>;
     }
 
-    const handleBookNowClick = (workerId) => {
-        setSelectedWorker(workerId === selectedWorker ? null : workerId);
+    const handleBookNowClick = async (workerId) => {
+        const selectedWorkerData = workers.find(worker => worker.id === workerId);
+
+        // If the worker is busy, don't proceed
+        if (!selectedWorkerData.availability) {
+            alert("This worker is currently busy. Please choose another worker.");
+            return;
+        }
+
+        // Set the worker as busy by updating the availability to false
+        try {
+            await setDoc(
+                doc(db, 'Workers', workerId),
+                {
+                    availability: false, // Set availability to false when booked
+                },
+                { merge: true }
+            );
+
+            setSelectedWorker(workerId); // Set the worker as the selected one
+        } catch (err) {
+            setError('Error updating availability: ' + err.message);
+        }
     };
 
     return (
@@ -79,9 +100,13 @@ const WorkerList = () => {
                         <p className="text-sm text-black">Email: {worker.email}</p>
                         <p className="text-sm text-black">Charges: {worker.charges}</p>
 
+                        {/* Disable the Book Now button if the worker is busy */}
                         <button
-                            className="mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-purple-600"
+                            className={`mt-4 py-2 px-4 rounded-lg ${
+                                !worker.availability ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-purple-600 text-white'
+                            }`}
                             onClick={() => handleBookNowClick(worker.id)}
+                            disabled={!worker.availability} // Disable if availability is false (busy)
                         >
                             {selectedWorker === worker.id ? 'Hide Booking' : 'Book Now'}
                         </button>
