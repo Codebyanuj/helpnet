@@ -54,30 +54,34 @@ const WorkerList = () => {
         return <p>Error: {error}</p>;
     }
 
-    const handleBookNowClick = async (workerId) => {
+    const handleBookNowClick = (workerId) => {
         const selectedWorkerData = workers.find(worker => worker.id === workerId);
-
-        // If the worker is busy, don't proceed
+    
+        // If the worker is busy, show an alert and don't allow booking
         if (!selectedWorkerData.availability) {
             alert("This worker is currently busy. Please choose another worker.");
             return;
         }
+    
+        setSelectedWorker(workerId); // Set the worker as selected for booking
+    };
+    
 
         // Set the worker as busy by updating the availability to false
-        try {
-            await setDoc(
-                doc(db, 'Workers', workerId),
-                {
-                    availability: false, // Set availability to false when booked
-                },
-                { merge: true }
-            );
+        // try {
+        //     await setDoc(
+        //         doc(db, 'Workers', workerId),
+        //         {
+        //             availability: false, // Set availability to false when booked
+        //         },
+        //         { merge: true }
+        //     );
 
-            setSelectedWorker(workerId); // Set the worker as the selected one
-        } catch (err) {
-            setError('Error updating availability: ' + err.message);
-        }
-    };
+        //     setSelectedWorker(workerId); // Set the worker as the selected one
+        // } catch (err) {
+        //     setError('Error updating availability: ' + err.message);
+        // }
+    
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen font-mono">
