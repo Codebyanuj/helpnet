@@ -13,6 +13,8 @@ const CustomerBookings = () => {
     const [error, setError] = useState(null);
     const [rating, setRating] = useState(5);
     const [review, setReview] = useState(''); // State for review text
+    const [confirmPayment, setConfirmPayment] = useState(false);
+
 
     useEffect(() => {
         const fetchWorkerDetails = async (workerId) => {
@@ -33,6 +35,8 @@ const CustomerBookings = () => {
                 return { name: 'Unknown Worker', typeOfWork: 'Unknown Work' };
             }
         };
+
+        
 
         const fetchBookings = async (customerId) => {
             try {
@@ -86,8 +90,28 @@ const CustomerBookings = () => {
             }
         });
 
+
+
+
+
         return () => unsubscribe();
     }, []);
+
+    const handlePaymentDone = async (bookingId) => {
+        try {
+            const bookingRef = doc(db, 'Bookings', bookingId);
+            await updateDoc(bookingRef, {
+                paymentStatus: 'done' // Adjust this field according to your schema
+            });
+
+            // Optionally, update local state to reflect the change
+            setPendingBookings(prev => prev.filter(booking => booking.id !== bookingId));
+            alert('Payment marked as done!');
+        } catch (error) {
+            console.error('Error marking payment as done:', error);
+            alert('There was an error marking the payment as done. Please try again.');
+        }
+    };
 
     const handleComplete = async (bookingId) => {
         if (window.confirm('Are you sure you want to mark this booking as complete?')) {
@@ -213,6 +237,8 @@ const CustomerBookings = () => {
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                             <p><strong>Message:</strong> {booking.message}</p>
+                            <p><strong>Total Charges:</strong> {booking.charges}</p>
+
 
                             <StarRating rating={rating} setRating={setRating} />
                             <textarea
@@ -233,7 +259,9 @@ const CustomerBookings = () => {
             )}
 
             {/* Completed Bookings */}
-            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">Completed Bookings</h2>
+            <h2 className="text-2xl font-mono font-bold mb-6 text-center text-white bg-gradient-to-r to-amber-900 from-blue-700 rounded-lg shadow-lg shadow-black">
+                Completed Bookings
+            </h2>
             {completedBookings.length === 0 ? (
                 <p>No completed bookings yet.</p>
             ) : (
@@ -247,20 +275,23 @@ const CustomerBookings = () => {
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                             <p><strong>Message:</strong> {booking.message}</p>
-                            
 
-                            {/* Display Star Rating */}
-                            <p><strong>Rating:</strong></p>
-                            {booking.rating ? (
-                                <StarRating rating={booking.rating} readOnly={true} />
-                            ) : (
-                                <p>No rating yet</p>
+                            {/* Payment Done Button */}
+                            {booking.paymentStatus === "pending" && (
+                                <button
+                                    onClick={() => handlePaymentDone(booking.id)}
+                                    className="bg-green-500 text-white rounded px-4 py-2 mt-4"
+                                >
+                                    Mark Payment Done
+                                </button>
                             )}
-                            <p><strong>Review:</strong> {booking.review || 'No review yet'}</p>
+                            {booking.paymentStatus === "done" && <p className="text-green-600">Payment Marked as Done</p>}
+                            {booking.paymentStatus === "received" && <p className="text-green-600">Payment Received</p>}
                         </div>
                     ))}
                 </div>
             )}
+            {/* ends */}
         </div>
     );
 };

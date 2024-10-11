@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; // Hook to get the category from the URL
 import { db } from '../firebase';
-import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import CustomerBookSlot from './CustomerBookSlot'; // Import the booking component
 import { getAuth } from 'firebase/auth'; // Import auth to get the current user
 
@@ -55,33 +55,13 @@ const WorkerList = () => {
     }
 
     const handleBookNowClick = (workerId) => {
-        const selectedWorkerData = workers.find(worker => worker.id === workerId);
-    
-        // If the worker is busy, show an alert and don't allow booking
-        if (!selectedWorkerData.availability) {
-            alert("This worker is currently busy. Please choose another worker.");
-            return;
+        // Toggle the selected worker: if the worker is already selected, hide the booking slot, else show it
+        if (selectedWorker === workerId) {
+            setSelectedWorker(null);  // Hide the booking slot
+        } else {
+            setSelectedWorker(workerId); // Show the booking slot for this worker
         }
-    
-        setSelectedWorker(workerId); // Set the worker as selected for booking
     };
-    
-
-        // Set the worker as busy by updating the availability to false
-        // try {
-        //     await setDoc(
-        //         doc(db, 'Workers', workerId),
-        //         {
-        //             availability: false, // Set availability to false when booked
-        //         },
-        //         { merge: true }
-        //     );
-
-        //     setSelectedWorker(workerId); // Set the worker as the selected one
-        // } catch (err) {
-        //     setError('Error updating availability: ' + err.message);
-        // }
-    
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen font-mono">

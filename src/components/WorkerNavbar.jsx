@@ -111,9 +111,9 @@ const WorkerNavbar = () => {
 
         <div className="hidden md:flex space-x-12 text-lg font-serif">
           <a href="/" className="text-white hover:text-yellow-400 transition duration-300">Home</a>
-          <a href="/jobs" className="text-white hover:text-yellow-400 transition duration-300">My Jobs</a>
+          <a href="/Aboutus" className="text-white hover:text-yellow-400 transition duration-300">About</a>
           <a href="/profile" className="text-white hover:text-yellow-400 transition duration-300">Profile</a>
-          <a href="/support" className="text-white hover:text-yellow-400 transition duration-300">Support</a>
+          <a href="/Help" className="text-white hover:text-yellow-400 transition duration-300">Help</a>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -125,7 +125,7 @@ const WorkerNavbar = () => {
 
           <div className="hidden md:flex space-x-4">
             <button className="text-white bg-yellow-500 hover:bg-yellow-600 rounded-full text-sm px-6 py-2">
-              <a href="/signin">SignIn</a>
+              <a href="/workerSignin">SignIn</a>
             </button>
             <button className="text-white bg-green-600 hover:bg-green-700 rounded-full text-sm px-6 py-2">
               <a href="/login">Login</a>

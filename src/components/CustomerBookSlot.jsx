@@ -107,6 +107,7 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                 taskLocation: finalTaskLocation,
                 workerLocation,
                 timestamp: serverTimestamp(),
+                paymentStatus:'pending',
             });
 
             setStatus('Booking request sent successfully!');
