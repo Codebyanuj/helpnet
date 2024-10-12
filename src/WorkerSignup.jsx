@@ -6,13 +6,15 @@ import { doc, setDoc } from 'firebase/firestore';
 
 const WorkerSignup = () => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(''); // Added state for password
     const [name, setName] = useState('');
-    const [address, setAddress] = useState('');
-    const [typeOfWork, setTypeOfWork] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');  // Updated to streetAddress
+    const [city, setCity] = useState('');  // Updated to city
+    const [district, setDistrict] = useState('');  // District
     const [phone, setPhone] = useState('');
-    const [charges, setCharges] = useState('');  // New state for charges
-    const [workingDays, setWorkingDays] = useState([]); // New state for working days
+    const [typeOfWork, setTypeOfWork] = useState('');
+    const [charges, setCharges] = useState('');  // Charges
+    const [workingDays, setWorkingDays] = useState([]); // Working days
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -24,14 +26,18 @@ const WorkerSignup = () => {
         setSuccess(null);
 
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password); // Using password here
             const user = userCredential.user;
 
             // Save worker data to Firestore
             const workerData = {
                 name: name,
                 email: email,
-                address: address,
+                address: {
+                    streetAddress: streetAddress.toLowerCase(),  // Updated field
+                    city: city.toLowerCase(),        // Updated field
+                    district: district.toLowerCase()
+                },
                 phone: phone,
                 typeOfWork: typeOfWork,
                 charges: charges, // Add charges to worker data
@@ -50,7 +56,6 @@ const WorkerSignup = () => {
         }
     };
 
-    // Function to handle working days checkboxes
     const handleWorkingDaysChange = (e) => {
         const { value, checked } = e.target;
         if (checked) {
@@ -92,14 +97,52 @@ const WorkerSignup = () => {
                     />
                 </div>
 
+                {/* Password Field */}
                 <div className="mb-4">
-                    <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-2">Address:</label>
+                    <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        onChange={(e) => setPassword(e.target.value)}  // Capturing password input
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+
+                {/* Address Fields */}
+                <div className="mb-4">
+                    <label htmlFor="streetAddress" className="block text-gray-700 text-sm font-bold mb-2">Street Address:</label>
                     <input
                         type="text"
-                        name="address"
-                        onChange={(e) => setAddress(e.target.value)}
+                        name="streetAddress"
+                        onChange={(e) => setStreetAddress(e.target.value)}
                         className="w-full px-3 py-2 border rounded border-gray-300"
-                        placeholder="Enter your address"
+                        placeholder="Enter your street address"
+                        required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-2">City:</label>
+                    <input
+                        type="text"
+                        name="city"
+                        onChange={(e) => setCity(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your city"
+                        required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="district" className="block text-gray-700 text-sm font-bold mb-2">District:</label>
+                    <input
+                        type="text"
+                        name="district"
+                        onChange={(e) => setDistrict(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your district"
                         required
                     />
                 </div>
@@ -120,9 +163,8 @@ const WorkerSignup = () => {
                         <option value="chef">Chef</option>
                         <option value="maid">Maid</option>
                         <option value="guard">Guard</option>
-                        <option value="contracter">Contracter</option>
+                        <option value="mason">Mason</option>
                         <option value="coder">Coder</option>
-                        {/* Add more options as needed */}
                     </select>
                 </div>
 
@@ -185,25 +227,14 @@ const WorkerSignup = () => {
                     </div>
                 </div>
 
-                <div className="mb-6">
-                    <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Password:</label>
-                    <input
-                        type="password"
-                        name="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-3 py-2 border rounded border-gray-300"
-                        placeholder="Enter your password"
-                        required
-                    />
+                <div className="flex items-center justify-center">
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 transition duration-200">
+                        Sign Up
+                    </button>
                 </div>
 
-                <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded">
-                    Sign Up
-                </button>
-
-                <p className="mt-4 text-center text-sm">
-                    Already registered?
-                    <Link to='/login' className="ml-1 font-bold text-blue-500 hover:text-blue-700">Login</Link>
+                <p className="mt-4 text-center text-sm text-gray-500">
+                    Already have an account? <Link to="/login" className="text-blue-500">Login here</Link>.
                 </p>
             </form>
         </div>

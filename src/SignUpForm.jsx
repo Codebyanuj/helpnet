@@ -8,7 +8,9 @@ const SignUpForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const [address, setAddress] = useState('');
+    const [streetOrVillage, setStreetOrVillage] = useState('');
+    const [cityOrTaluka, setCityOrTaluka] = useState('');
+    const [district, setDistrict] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();  // Initialize useNavigate
@@ -26,7 +28,11 @@ const SignUpForm = () => {
             const customerData = {
                 name: name,
                 email: email,
-                address: address,
+                address: {
+                    streetOrVillage: streetOrVillage.toLowerCase(),  // Convert to lowercase
+                    cityOrTaluka: cityOrTaluka.toLowerCase(),        // Convert to lowercase
+                    district: district.toLowerCase()   
+                },
                 role: 'customer'
             };
 
@@ -75,14 +81,39 @@ const SignUpForm = () => {
                     />
                 </div>
 
+                {/* Updated Address Fields */}
                 <div className="mb-4">
-                    <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-2">Address:</label>
+                    <label htmlFor="streetOrVillage" className="block text-gray-700 text-sm font-bold mb-2">Street or Village:</label>
                     <input
                         type="text"
-                        name="address"
-                        onChange={(e) => setAddress(e.target.value)}
+                        name="streetOrVillage"
+                        onChange={(e) => setStreetOrVillage(e.target.value)}
                         className="w-full px-3 py-2 border rounded border-gray-300"
-                        placeholder="Enter your address"
+                        placeholder="Enter your street or village"
+                        required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="cityOrTaluka" className="block text-gray-700 text-sm font-bold mb-2">City or Taluka:</label>
+                    <input
+                        type="text"
+                        name="cityOrTaluka"
+                        onChange={(e) => setCityOrTaluka(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your city or taluka"
+                        required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="district" className="block text-gray-700 text-sm font-bold mb-2">District:</label>
+                    <input
+                        type="text"
+                        name="district"
+                        onChange={(e) => setDistrict(e.target.value)}
+                        className="w-full px-3 py-2 border rounded border-gray-300"
+                        placeholder="Enter your district"
                         required
                     />
                 </div>

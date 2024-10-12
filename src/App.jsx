@@ -39,7 +39,7 @@ function App() {
 
           <Route path='/SignType' element={<SigninType />}></Route>
           <Route path='/workerSignin' element={<WorkerSignin />}></Route>
-          <Route path='/signup' element={<SignUpForm />}></Route>
+          <Route path='/signin' element={<SignUpForm />}></Route>
           <Route path='/login' element={<Login />}></Route>
           <Route path="Container" element={<GridContainer />} />
           <Route path="/workers/:category" element={<WorkerList />} />

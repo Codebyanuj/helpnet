@@ -113,24 +113,24 @@ const CustomerBookings = () => {
         }
     };
 
-    const handleComplete = async (bookingId) => {
-        if (window.confirm('Are you sure you want to mark this booking as complete?')) {
-            try {
-                const bookingRef = doc(db, 'Bookings', bookingId);
-                await updateDoc(bookingRef, {
-                    status: 'completed',
-                });
+    // const handleComplete = async (bookingId) => {
+    //     if (window.confirm('Are you sure you want to mark this booking as complete?')) {
+    //         try {
+    //             const bookingRef = doc(db, 'Bookings', bookingId);
+    //             await updateDoc(bookingRef, {
+    //                 status: 'completed',
+    //             });
 
-                setDoneBookings(prev => prev.filter(booking => booking.id !== bookingId));
-                const completedBooking = doneBookings.find(booking => booking.id === bookingId);
-                setCompletedBookings(prev => [...prev, { ...completedBooking, status: 'completed' }]);
+    //             setDoneBookings(prev => prev.filter(booking => booking.id !== bookingId));
+    //             const completedBooking = doneBookings.find(booking => booking.id === bookingId);
+    //             setCompletedBookings(prev => [...prev, { ...completedBooking, status: 'completed' }]);
 
-                alert('Booking has been successfully marked as completed!');
-            } catch (error) {
-                console.error('Error updating booking status to completed:', error);
-            }
-        }
-    };
+    //             alert('Booking has been successfully marked as completed!');
+    //         } catch (error) {
+    //             console.error('Error updating booking status to completed:', error);
+    //         }
+    //     }
+    // };
 
     const handleReviewSubmit = async (bookingId) => {
         try {

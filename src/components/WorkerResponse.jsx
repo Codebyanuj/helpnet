@@ -113,7 +113,7 @@ const WorkerResponse = () => {
                         id: doc.id,
                         ...bookingData,
                         customerName: customerData ? customerData.name : 'Unknown',
-                        customerAddress: customerData ? customerData.address : 'Unknown',
+                        customerAddress: customerData && customerData.address ? `${customerData.address.cityOrTaluka}, ${customerData.address.streetOrVillage}, ${customerData.address.district}` : 'Unknown',
                         latitude: taskLocation.latitude || null,
                         longitude: taskLocation.longitude || null,
                         workerLat: workerLocation.latitude || null, // Fetch worker location from booking data
