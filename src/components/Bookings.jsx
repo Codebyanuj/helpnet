@@ -275,6 +275,7 @@ const CustomerBookings = () => {
                             <p><strong>Date:</strong> {booking.date}</p>
                             <p><strong>Time:</strong> {booking.time}</p>
                             <p><strong>Message:</strong> {booking.message}</p>
+                            <p><strong>Payment:</strong> {booking.paymentStatus}</p>
 
                             {/* Payment Done Button */}
                             {booking.paymentStatus === "pending" && (

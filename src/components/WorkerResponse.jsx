@@ -113,8 +113,12 @@ const WorkerResponse = () => {
                         id: doc.id,
                         ...bookingData,
                         customerName: customerData ? customerData.name : 'Unknown',
-                        customerAddress: customerData && customerData.address ? `${customerData.address.cityOrTaluka}, ${customerData.address.streetOrVillage}, ${customerData.address.district}` : 'Unknown',
-                        latitude: taskLocation.latitude || null,
+                        // Handle both old and new address formats
+                        customerAddress: customerData && customerData.address
+                            ? typeof customerData.address === 'object'
+                                ? `${customerData.address.cityOrTaluka || ''}${customerData.address.streetOrVillage ? ', ' + customerData.address.streetOrVillage : ''}${customerData.address.district ? ', ' + customerData.address.district : ''}`
+                                : customerData.address  // If the address is a string (old structure)
+                            : 'Unknown', latitude: taskLocation.latitude || null,
                         longitude: taskLocation.longitude || null,
                         workerLat: workerLocation.latitude || null, // Fetch worker location from booking data
                         workerLng: workerLocation.longitude || null,
@@ -289,7 +293,7 @@ const WorkerResponse = () => {
     const handlePaymentReceived = async (bookingId) => {
         const auth = getAuth();
         const user = auth.currentUser;
-    
+
         if (user) {
             console.log("Authenticated user ID:", user.uid);  // Logs the unique ID of the user
             console.log("Authenticated user email:", user.email);  // Logs the user's email
@@ -298,7 +302,7 @@ const WorkerResponse = () => {
         } else {
             console.log("No user is authenticated");
         }
-    
+
         const confirmAction = window.confirm("Confirm that you have received the payment?");
         if (confirmAction) {
             setConfirmReceived(true);
@@ -314,7 +318,7 @@ const WorkerResponse = () => {
             }
         }
     };
-    
+
 
     //FUNCTIONLITY TO ADD THE CHARGES 
 

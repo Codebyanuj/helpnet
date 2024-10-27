@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, serverTimestamp, doc, updateDoc,getDoc } from 'firebase/firestore';
 
 const CustomerBookSlot = ({ customerId, workerId }) => {
     const [date, setDate] = useState('');
@@ -12,6 +12,27 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
     const [taskLocation, setTaskLocation] = useState({ latitude: null, longitude: null });
     const [workerLocation, setWorkerLocation] = useState({ latitude: null, longitude: null });
     const [error, setError] = useState(null);
+    const [workerWorkingDays, setWorkerWorkingDays] = useState([]); // Holds the worker's working days
+
+    // Fetch worker's working days when the component mounts
+    useEffect(() => {
+        const fetchWorkerWorkingDays = async () => {
+            try {
+                const workerRef = doc(db, 'Workers', workerId);
+                const workerDoc = await getDoc(workerRef);  // Use getDoc to fetch a single document
+                if (workerDoc.exists()) {
+                    const workerData = workerDoc.data();
+                    setWorkerWorkingDays(workerData.workingDays || []); // Assuming 'workingDays' is an array of strings
+                } else {
+                    setError('Worker not found.');
+                }
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        fetchWorkerWorkingDays();
+    }, [workerId]);
 
     useEffect(() => {
         if (date && time) {
@@ -107,7 +128,7 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                 taskLocation: finalTaskLocation,
                 workerLocation,
                 timestamp: serverTimestamp(),
-                paymentStatus:'pending',
+                paymentStatus: 'pending',
             });
 
             setStatus('Booking request sent successfully!');
@@ -118,6 +139,19 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
             setStatus(`Error: ${error.message}`);
         }
     };
+
+    // Function to disable dates that are not within the worker's working days
+    const isDateAvailable = (selectedDate) => {
+        if (!workerWorkingDays.length) return true; // If no working days, all dates are available
+
+        const dayOfWeek = new Date(selectedDate).getDay(); // Get the day of the week (0-Sunday, 1-Monday, etc.)
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        return workerWorkingDays.includes(dayNames[dayOfWeek]);
+    };
+
+    // Function to disable the date picker to only allow future dates
+    const minDate = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
 
     return (
         <div className="bg-gradient-to-b from-blue-100 to-purple-200 p-6 border-gray-600 border-4 rounded-xl shadow-xl max-w-lg mx-auto">
@@ -143,6 +177,12 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
                         onChange={(e) => setDate(e.target.value)}
                         className="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500"
                         required
+                        min={minDate} // Allow only present day and future dates
+                        disabled={!workerWorkingDays.length} // Disable date picker until working days are fetched
+                        onInvalid={() => setStatus('Invalid date, please choose again.')}
+                        // Only allow selecting dates that match the worker's working days
+                        pattern={workerWorkingDays.join('|')}
+                        title="Only select dates that match the worker's working days."
                     />
                 </div>
 
@@ -195,10 +235,9 @@ const CustomerBookSlot = ({ customerId, workerId }) => {
 
                 <button
                     type="submit"
-                    className="w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105 focus:outline-none"
-                    disabled={!isSlotAvailable}
+                    className="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-transform transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
-                    Submit Booking
+                    Send Booking Request
                 </button>
             </form>
         </div>

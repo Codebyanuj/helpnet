@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import userIcon from '../components/Icons/user1.png'; // Import user icon
+import LogoutButton from './handleLogout'; // Import the logout button component
+
 
 const Navbar = () => {
   // State to manage the visibility of the mobile menu and sidebar
@@ -262,7 +264,10 @@ const Navbar = () => {
 
                 {/* Settings and Logout Links */}
                 <a href="/Bookings" className="block mt-4 text-cyan-600 hover:text-cyan-400">Bookings</a>
-                <a href="/logout" className="block mt-2 text-red-600 hover:text-red-400">Logout</a>
+                <div className="flex justify-end">
+                <LogoutButton /> {/* Render the logout button */}
+                </div>              
+
               </div>
             ) : (
               <p>No profile data available.</p>

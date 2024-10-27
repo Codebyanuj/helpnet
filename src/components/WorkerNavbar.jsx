@@ -3,6 +3,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import userIcon from '../components/Icons/user1.png';
 import { onAuthStateChanged } from 'firebase/auth';
+import LogoutButton from './handleLogout'; // Import the logout button component
+
 
 const WorkerNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -100,7 +102,7 @@ const WorkerNavbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-purple-900 to-green-900 shadow-lg p-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl relative">
+    <nav className="bg-gradient-to-r from-purple-900 to-green-900 shadow-lg p-2 px-4 mx-3 mt-3 border-2 border-gray-700 rounded-xl relative">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-1">
           <div className="bg-gradient-to-r from-red-500 to-pink-500 p-2 rounded-full">
@@ -117,11 +119,11 @@ const WorkerNavbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <input
+          {/* <input
             type="text"
             placeholder="Search Jobs..."
             className="hidden md:block p-2 rounded-full text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
+          /> */}
 
           <div className="hidden md:flex space-x-4">
             <button className="text-white bg-yellow-500 hover:bg-yellow-600 rounded-full text-sm px-6 py-2">
@@ -244,44 +246,55 @@ const WorkerNavbar = () => {
                       </div>
                     </div>
 
-                    <button
-                      className="bg-lime-500 text-black p-2 rounded-lg w-full hover:bg-yellow-300"
-                      onClick={updateWorkerData}
-                    >
-                      Save Changes
-                    </button>
-                    {success && <p className="text-green-500 mt-2">{success}</p>}
+
                   </div>
                 )}
-               <div className="mt-4">
-                <label className="inline-flex items-center cursor-pointer">
-                  <span className="relative">
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={availability}
-                      onChange={toggleAvailability}
-                    />
-                    <span
-                      className={`block w-16 h-8 bg-gray-400 rounded-full transition duration-200 ease-in-out ${availability ? 'bg-green-600' : 'bg-red-600'
-                        }`}
-                    >
+                <div className="mt-4">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <span className="relative">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={availability}
+                        onChange={toggleAvailability}
+                      />
                       <span
-                        className={`absolute w-8 h-8 bg-white rounded-full transition transform ${availability ? 'translate-x-8' : 'translate-x-0'
+                        className={`block w-10 h-5 bg-gray-400 border-s-black border-2 rounded-full transition duration-200 ease-in-out ${availability ? 'bg-green-600' : 'bg-red-600'
                           }`}
-                      ></span>
+                      >
+                        <span
+                          className={`absolute w-5 h-5 bg-white rounded-full transition transform ${availability ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                        ></span>
+                      </span>
                     </span>
-                  </span>
-                  <span className="ml-3 text-lg text-gray-700">
-                    {availability ? 'Available' : 'Busy'}
-                  </span>
-                </label>
+                    <span className="ml-3 text-lg text-gray-700">
+                      {availability ? 'Available' : 'Busy'}
+                    </span>
+                  </label>
                 </div>
               </>
             ) : (
               <p>No worker data found</p>
             )}
+
+           
+
+
+            <button
+              className="bg-lime-500 text-black p-2 mt-3 rounded-lg w-full hover:bg-yellow-300"
+              onClick={updateWorkerData}
+            >
+              Save Changes
+            </button>
+            {success && <p className="text-green-500 mt-2">{success}</p>}
+
+ {/* Logout Links */}
+            <div className="flex justify-end mt-1">
+              <LogoutButton /> {/* Render the logout button */}
+            </div>
           </div>
+
         </>
       )}
 

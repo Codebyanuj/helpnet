@@ -20,6 +20,24 @@ const WorkerSignup = () => {
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
 
+
+    //TO ADD FUNCTIONALITY TO SELECT THE POP-UP EMAIL
+    const handleGoogleSignIn = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Automatically fill in the email field with the authenticated Google email
+            setEmail(user.email);
+
+        } catch (error) {
+            setError(error.message);
+            console.error('Error signing in with Google:', error);
+        }
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -96,6 +114,15 @@ const WorkerSignup = () => {
                         required
                     />
                 </div>
+
+                {/* Google Sign-In Button */}
+                <p>Just Select the email from your device </p>
+                 <button 
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded mb-4">
+                    Sign in with Google
+                </button>
 
                 {/* Password Field */}
                 <div className="mb-4">

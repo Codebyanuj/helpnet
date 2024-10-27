@@ -5,12 +5,12 @@ import electician from '../components/Icons/electrician.png';
 import mechanic from '../components/Icons/mechanic.png';
 import plumber from '../components/Icons/plumber.png';
 import guard from '../components/Icons/guard.png';
-import gardener from '../components/Icons/gardener1.png';
+import gardener from '../components/Icons/gardener.png';
 import maid from '../components/Icons/maid.png';
 import carpenter from '../components/Icons/carpenter.png';
 import contractor from '../components/Icons/contractor.png';
 import chef from '../components/Icons/chef.png';
-import coding from '../components/Icons/coding.png';
+import painter from '../components/Icons/painter.png';
 
 const GridContainer = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const GridContainer = () => {
     { image: carpenter, data: 'Carpenter' },
     { image: contractor, data: 'Contractor' },
     { image: chef, data: 'Chef' },
-    { image: coding, data: 'Coding' },
+    { image: painter, data: 'Painter' },
   ];
 
 
@@ -51,7 +51,7 @@ const GridContainer = () => {
         {boxes.map((box, index) => (
           <div
             key={index}
-            className="bg-gray-200 p-6 px-4 py-11 h-auto mb-4 w-full sm:w-40 md:w-44 flex flex-col items-center shadow-md shadow-yellow-950 justify-center text-center rounded-lg cursor-pointer ursor-pointer hover:bg-gradient-to-b from-indigo-500 to-purple-500  transition duration-300 transform hover:scale-125 hover:shadow-lg "
+            className="bg-gray-200 px-4 py-11 h-auto mb-4 w-full sm:w-40 md:w-44 flex flex-col items-center shadow-md shadow-yellow-950 justify-center text-center rounded-lg cursor-pointer ursor-pointer hover:bg-gradient-to-b from-indigo-500 to-purple-500  transition duration-300 transform hover:scale-125 hover:shadow-lg "
             onClick={() => handleCategoryClick(box.data)}
           >
             <img src={box.image} alt={`${box.data} icon`} className="h-22 w-20 mb-6" />
