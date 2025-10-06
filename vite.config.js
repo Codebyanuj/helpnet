@@ -6,3 +6,5 @@ export default defineConfig({
   plugins: [react()],
   base: '/helpnet/',   // 👈 important for GitHub Pages
 })
+
+

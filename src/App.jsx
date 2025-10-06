@@ -1,5 +1,5 @@
 import React from "react"
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
 
 import SigninType from "./components/Signtype";
@@ -8,31 +8,29 @@ import SignUpForm from "./SignUpForm";
 import Login from "./Login";
 import WorkerSignin from "./WorkerSignup";
 import Bookings from './components/Bookings'
-
 import GridContainer from './components/GridContainer';
 import WorkerList from './components/WorkerList';
 import AboutUs from './components/AboutUS';
 import Help from './components/Help';
 import Workernav from './components/WorkerNavbar';
 
-
 function App() {
   return (
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
-          <Route path='/' element={<Home />}></Route>
-          <Route path='/Aboutus' element={<AboutUs />}></Route>
-          <Route path='/Help' element={<Help />}></Route>
-          <Route path='/Bookings' element={<Bookings />}></Route>
-          <Route path='/Workernav' element={<Workernav />}></Route>
-          <Route path='/Signupas' element={<SigninType />}></Route>
-          <Route path='/workerSignin' element={<WorkerSignin />}></Route>
-          <Route path='/signin' element={<SignUpForm />}></Route>
-          <Route path='/login' element={<Login />}></Route>
-          <Route path="Container" element={<GridContainer />} />
-          <Route path="/workers/:category" element={<WorkerList />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/Aboutus' element={<AboutUs />} />
+          <Route path='/Help' element={<Help />} />
+          <Route path='/Bookings' element={<Bookings />} />
+          <Route path='/Workernav' element={<Workernav />} />
+          <Route path='/Signupas' element={<SigninType />} />
+          <Route path='/workerSignin' element={<WorkerSignin />} />
+          <Route path='/signin' element={<SignUpForm />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/Container' element={<GridContainer />} />
+          <Route path='/workers/:category' element={<WorkerList />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
   );
 }
 
