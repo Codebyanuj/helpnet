@@ -1,5 +1,5 @@
-import React from "react"
-import { ReactRouter, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './index.css'
 
 import SigninType from "./components/Signtype";
@@ -7,7 +7,7 @@ import Home from "./Home";
 import SignUpForm from "./SignUpForm";
 import Login from "./Login";
 import WorkerSignin from "./WorkerSignup";
-import Bookings from './components/Bookings'
+import Bookings from './components/Bookings';
 import GridContainer from './components/GridContainer';
 import WorkerList from './components/WorkerList';
 import AboutUs from './components/AboutUS';
@@ -16,7 +16,7 @@ import Workernav from './components/WorkerNavbar';
 
 function App() {
   return (
-      <ReactRouter>
+      <Router>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/Aboutus' element={<AboutUs />} />
@@ -30,7 +30,7 @@ function App() {
           <Route path='/Container' element={<GridContainer />} />
           <Route path='/workers/:category' element={<WorkerList />} />
         </Routes>
-      </ReactRouter>
+      </Router>
   );
 }
 
