@@ -1,5 +1,5 @@
 import React from "react"
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { ReactRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
 
 import SigninType from "./components/Signtype";
@@ -16,7 +16,7 @@ import Workernav from './components/WorkerNavbar';
 
 function App() {
   return (
-      <HashRouter>
+      <ReactRouter>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/Aboutus' element={<AboutUs />} />
@@ -30,7 +30,7 @@ function App() {
           <Route path='/Container' element={<GridContainer />} />
           <Route path='/workers/:category' element={<WorkerList />} />
         </Routes>
-      </HashRouter>
+      </ReactRouter>
   );
 }
 
